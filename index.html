@@ -1,0 +1,4576 @@
+<!DOCTYPE html>
+<!--
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║   ██████╗ ██╗███╗   ███╗    ██╗  ██╗███████╗██████╗ ██╗   ██╗ ██████╗   ║
+║  ██╔════╝ ██║████╗ ████║    ██║ ██╔╝██╔════╝██╔══██╗██║   ██║██╔════╝   ║
+║  ██║  ███╗██║██╔████╔██║    █████╔╝ █████╗  ██████╔╝██║   ██║██║  ███╗  ║
+║  ██║   ██║██║██║╚██╔╝██║    ██╔═██╗ ██╔══╝  ██╔══██╗██║   ██║██║   ██║  ║
+║  ╚██████╔╝██║██║ ╚═╝ ██║    ██║  ██╗███████╗██████╔╝╚██████╔╝╚██████╔╝  ║
+║   ╚═════╝ ╚═╝╚═╝     ╚═╝    ╚═╝  ╚═╝╚══════╝╚═════╝  ╚═════╝  ╚═════╝   ║
+║                                                                          ║
+║              GIM KEBUGARAN JASMANI — PJOK Kelas 6 SD                    ║
+║              Pose Detection Educational Game                             ║
+║                                                                          ║
+║   ═══════════════════════════════════════════════════════════════════   ║
+║                                                                          ║
+║   © 2025  Oryza Sativa N.  (Gurumasakini)                               ║
+║   ─────────────────────────────────────────                              ║
+║   Guru & Akademisi PJOK · Magister Pendidikan Olahraga                   ║
+║   Karya inovasi pembelajaran berbasis AI Pose Detection                  ║
+║                                                                          ║
+║   Dibangun dengan:                                                       ║
+║     • HTML5 + CSS3 + Vanilla JavaScript (zero framework)                 ║
+║     • Google MediaPipe Pose untuk deteksi landmark tubuh                 ║
+║     • Web Audio API untuk efek suara real-time                           ║
+║     • WebRTC getUserMedia untuk akses kamera                             ║
+║                                                                          ║
+║   SIGNATURE-HASH: ORYZA-SATIVA-N-GURUMASAKINI-2025-PJOK-K6              ║
+║                                                                          ║
+║   ⚠ KARYA INI DILINDUNGI HAK CIPTA.                                     ║
+║      Dilarang menghapus atau memodifikasi penanda pengembang             ║
+║      tanpa izin tertulis dari penulis asli.                              ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+-->
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="author" content="Oryza Sativa N. (Gurumasakini)"/>
+<meta name="creator" content="Oryza Sativa N."/>
+<meta name="copyright" content="© 2025 Oryza Sativa N. — Gurumasakini"/>
+<meta name="description" content="Gim Kebugaran Jasmani — PJOK Kelas 6 SD dengan AI Pose Detection. Karya: Oryza Sativa N."/>
+<meta name="keywords" content="PJOK, kebugaran, pose detection, MediaPipe, pendidikan olahraga, Oryza Sativa, Gurumasakini"/>
+<meta name="application-name" content="Gim Kebugaran Jasmani"/>
+<meta name="signature" content="ORYZA-SATIVA-N-GURUMASAKINI-2025"/>
+<title>GIM KEBUGARAN JASMANI – PJOK Kelas 6</title>
+
+<!-- MediaPipe — butuh internet PERTAMA KALI, lalu cached browser -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+
+<style>
+/* ============================================================
+   RESET & ROOT
+============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* === ROYAL BLUE PREMIUM PALETTE === */
+  --bg-deep:#020a1f;
+  --bg:#061536;
+  --panel:#0a1f48;
+  --card:#102b5e;
+  --card-light:#1a3a78;
+  --border:#1e4794;
+  --border-bright:#2e60c4;
+
+  /* === ACCENTS — Neon Cyan + Electric === */
+  --accent:#00d9ff;
+  --accent-2:#4cc9ff;
+  --accent-glow:rgba(0,217,255,.45);
+  --neon:#7af9ff;
+  --royal:#3b82f6;
+  --royal-deep:#1e40af;
+
+  /* === STATE COLORS === */
+  --green:#00ff9d;
+  --green-glow:rgba(0,255,157,.4);
+  --yellow:#ffd60a;
+  --red:#ff3d71;
+  --orange:#ff8a3d;
+  --purple:#b794f4;
+  --gold:#ffd700;
+  --silver:#c0c0c0;
+  --bronze:#cd7f32;
+  --platinum:#e5e4e2;
+  --diamond:#b9f2ff;
+
+  /* === TEXT === */
+  --text:#e3edff;
+  --text-dim:#a0b5d8;
+  --muted:#5876a8;
+
+  /* === GLASS effects === */
+  --glass-bg:rgba(16, 43, 94, 0.45);
+  --glass-bg-hi:rgba(26, 58, 120, 0.55);
+  --glass-border:rgba(124, 187, 255, 0.18);
+  --glass-border-bright:rgba(0, 217, 255, 0.35);
+  --glass-blur:blur(18px) saturate(140%);
+  --glass-shadow:0 8px 32px rgba(0, 8, 30, 0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+html,body{
+  width:100%;height:100%;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%, #1a3a78 0%, #061536 45%, #020a1f 100%);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  font-family:'Tahoma','Verdana',sans-serif;
+  color:var(--text);
+}
+
+/* ============================================================
+   16:9 APP SHELL
+============================================================ */
+#app{
+  position:fixed;
+  width:1280px;height:720px;
+  transform-origin:top left;
+  background:
+    radial-gradient(ellipse 60% 80% at 15% 0%, rgba(59,130,246,.18), transparent 60%),
+    radial-gradient(ellipse 70% 60% at 100% 100%, rgba(0,217,255,.12), transparent 70%),
+    radial-gradient(circle at 50% 50%, #0a1f48 0%, #061536 60%, #020a1f 100%);
+  overflow:hidden;
+}
+/* Animated mesh grid + subtle particles */
+#app::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,217,255,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,217,255,.04) 1px,transparent 1px);
+  background-size:52px 52px;
+  pointer-events:none;z-index:0;
+  mask-image:radial-gradient(ellipse at center, #000 30%, transparent 90%);
+  -webkit-mask-image:radial-gradient(ellipse at center, #000 30%, transparent 90%);
+}
+/* Floating glow orbs */
+#app::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(circle 200px at 12% 20%, rgba(0,217,255,.08), transparent 70%),
+    radial-gradient(circle 300px at 88% 75%, rgba(59,130,246,.10), transparent 70%),
+    radial-gradient(circle 220px at 60% 40%, rgba(122,249,255,.05), transparent 70%);
+  animation:meshFloat 18s ease-in-out infinite;
+}
+@keyframes meshFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(15px,-12px) scale(1.04)}
+  66%{transform:translate(-12px,18px) scale(.98)}
+}
+
+/* ============================================================
+   SCREENS
+============================================================ */
+.screen{
+  position:absolute;inset:0;
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:1;
+}
+.screen.active{display:flex}
+
+/* ============================================================
+   TYPE SCALE
+============================================================ */
+.t-hero {font-size:36px;font-weight:900;letter-spacing:-.5px;line-height:1.08}
+.t-title{font-size:22px;font-weight:800}
+.t-sub  {font-size:17px;font-weight:700}
+.t-body {font-size:14px;line-height:1.55}
+.t-sm   {font-size:12px}
+.t-xs   {font-size:10px}
+.glow-a {text-shadow:0 0 28px var(--accent)}
+.glow-g {text-shadow:0 0 24px var(--green)}
+.glow-y {text-shadow:0 0 24px var(--yellow)}
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  border:none;border-radius:50px;cursor:pointer;
+  font-family:inherit;font-weight:800;letter-spacing:.5px;
+  transition:all .18s;user-select:none;position:relative;overflow:hidden;
+}
+.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:.14s}
+.btn:hover::after{background:rgba(255,255,255,.09)}
+.btn:active{transform:scale(.96)}
+.btn-lg{padding:12px 32px;font-size:15px}
+.btn-md{padding:9px 22px;font-size:13px}
+.btn-sm{padding:6px 14px;font-size:11px}
+.btn-primary{
+  background:linear-gradient(135deg,#3b82f6 0%,#1e40af 100%);
+  color:#fff;
+  box-shadow:0 6px 26px rgba(59,130,246,.55),inset 0 1px 0 rgba(255,255,255,.18);
+  border:1px solid rgba(122,249,255,.25);
+}
+.btn-primary:hover{box-shadow:0 8px 32px rgba(59,130,246,.75),inset 0 1px 0 rgba(255,255,255,.22)}
+.btn-green{
+  background:linear-gradient(135deg,#00d486 0%,#007b50 100%);
+  color:#fff;
+  box-shadow:0 6px 26px rgba(0,212,134,.5),inset 0 1px 0 rgba(255,255,255,.18);
+  border:1px solid rgba(0,255,157,.3);
+}
+.btn-orange{
+  background:linear-gradient(135deg,#ff8a3d 0%,#cc4d00 100%);
+  color:#fff;
+  box-shadow:0 6px 26px rgba(255,138,61,.45),inset 0 1px 0 rgba(255,255,255,.18);
+}
+.btn-ghost{
+  background:var(--glass-bg);
+  color:var(--text-dim);
+  border:1.5px solid var(--glass-border);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,217,255,.08)}
+
+/* ============================================================
+   FORM ELEMENTS — GLASS
+============================================================ */
+.field{
+  background:var(--glass-bg);
+  border:1.5px solid var(--glass-border);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  color:var(--text);border-radius:12px;padding:11px 18px;
+  font-size:16px;font-family:inherit;outline:none;text-align:center;
+  transition:all .2s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.field:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,217,255,.18), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.field::placeholder{color:var(--muted)}
+
+/* ============================================================
+   CARD / PILL — GLASSMORPHISM
+============================================================ */
+.card{
+  background:var(--glass-bg);
+  border:1.5px solid var(--glass-border);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  border-radius:16px;padding:20px 24px;
+  box-shadow:var(--glass-shadow);
+  position:relative;
+}
+/* glass shine accent on top */
+.card::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);
+  pointer-events:none;
+}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:100px;padding:5px 15px;
+  font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+.pill-a{background:rgba(0,217,255,.12);border:1.5px solid rgba(0,217,255,.32);color:var(--accent);box-shadow:0 0 14px rgba(0,217,255,.15)}
+.pill-g{background:rgba(0,255,157,.1);border:1.5px solid rgba(0,255,157,.30);color:var(--green);box-shadow:0 0 14px rgba(0,255,157,.12)}
+.pill-y{background:rgba(255,214,10,.1);border:1.5px solid rgba(255,214,10,.30);color:var(--yellow);box-shadow:0 0 14px rgba(255,214,10,.12)}
+
+/* ============================================================
+   PROGRESS / TIMER RING
+============================================================ */
+.pbar-wrap{width:100%;height:9px;background:var(--panel);border-radius:100px;overflow:hidden}
+.pbar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .35s;box-shadow:0 0 8px var(--accent)}
+
+.timer-ring{position:relative;width:116px;height:116px;flex-shrink:0}
+.timer-ring svg{transform:rotate(-90deg)}
+.tr-bg  {fill:none;stroke:var(--panel);stroke-width:9}
+.tr-prog{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;
+         stroke-dasharray:332;stroke-dashoffset:0;transition:stroke-dashoffset .9s linear}
+.tr-num {
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:24px;font-weight:900;color:var(--text);
+}
+
+/* ============================================================
+   HUD
+============================================================ */
+#hud{
+  position:absolute;top:0;left:0;right:0;height:64px;
+  background:var(--glass-bg-hi);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  border-bottom:1.5px solid var(--glass-border);
+  display:none;align-items:center;padding:0 26px;gap:18px;z-index:20;
+  box-shadow:0 4px 20px rgba(0,8,30,.4);
+}
+.hud-item{display:flex;align-items:center;gap:7px}
+.hud-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.hud-val{font-size:20px;font-weight:800}
+.hud-div{width:1px;height:30px;background:var(--border);flex-shrink:0}
+
+/* ============================================================
+   SCREEN 1 — INTRO
+============================================================ */
+#s-intro{
+  background:
+    radial-gradient(ellipse 80% 60% at 55% 0%,rgba(0,229,255,.08),transparent),
+    radial-gradient(ellipse 50% 70% at 85% 100%,rgba(0,230,118,.05),transparent),
+    var(--bg);
+}
+.intro-bg-fig{
+  position:absolute;right:90px;top:50%;
+  transform:translateY(-50%);
+  /* Ukuran TETAP — tidak melebar mengikuti konten */
+  width:380px;height:520px;
+  display:flex;align-items:center;justify-content:center;
+  opacity:.16;pointer-events:none;overflow:hidden;
+}
+.intro-bg-fig svg,
+.intro-bg-fig img{
+  max-width:100%;max-height:100%;
+  width:auto;height:auto;
+  object-fit:contain;
+}
+.hero-wrap{
+  display:flex;flex-direction:column;align-items:flex-start;gap:20px;
+  max-width:620px;padding-left:80px;
+}
+
+/* ============================================================
+   SCREEN 2 — SETUP
+============================================================ */
+.dur-pills{display:flex;gap:11px}
+.dur-p{
+  padding:10px 24px;border-radius:50px;cursor:pointer;
+  border:2px solid var(--border);background:var(--panel);
+  color:var(--muted);font-size:16px;font-weight:700;transition:all .2s;
+}
+.dur-p:hover{border-color:var(--accent);color:var(--accent)}
+.dur-p.on{border-color:var(--accent);background:rgba(0,229,255,.1);color:var(--accent);box-shadow:0 0 12px rgba(0,229,255,.16)}
+
+/* ============================================================
+   SCREEN 3 — PILIH GERAKAN
+============================================================ */
+.mov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:920px;justify-items:stretch}
+.mov-card{
+  background:var(--glass-bg);
+  border:1.5px solid var(--glass-border);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  border-radius:18px;padding:24px 20px;
+  cursor:pointer;text-align:center;transition:all .3s;
+  position:relative;overflow:hidden;
+  box-shadow:var(--glass-shadow);
+}
+.mov-card::before{
+  content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+}
+.mov-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at top, rgba(0,217,255,.08), transparent 60%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.mov-card:hover:not(.done){
+  border-color:var(--accent);transform:translateY(-6px);
+  box-shadow:0 18px 40px rgba(0,217,255,.22),0 0 0 1px rgba(0,217,255,.3);
+}
+.mov-card:hover:not(.done)::after{opacity:1}
+.mov-card.done{border-color:var(--green);opacity:.55;cursor:default}
+.mov-icon{font-size:38px;margin-bottom:8px;line-height:1}
+.mov-name{font-size:17px;font-weight:700;margin-bottom:4px}
+.mov-cat {font-size:13px;color:var(--muted)}
+.done-ck{
+  position:absolute;top:10px;right:10px;
+  background:var(--green);color:#000;border-radius:50%;
+  width:24px;height:24px;display:none;
+  align-items:center;justify-content:center;font-size:13px;font-weight:900;
+}
+.mov-card.done .done-ck{display:flex}
+
+/* ============================================================
+   SCREEN 4 — POSE REFERENSI
+============================================================ */
+#s-ref{padding-top:64px}
+.ref-layout{
+  display:flex;gap:32px;align-items:flex-start;
+  width:1160px;height:626px;padding-top:10px;
+}
+
+/* dual pose panel (phase A + phase B) */
+.dual-pose{
+  flex:0 0 400px;display:flex;flex-direction:column;gap:12px;
+}
+.phase-row{
+  display:flex;gap:10px;align-items:stretch;
+}
+.phase-box{
+  flex:1;background:var(--panel);border:2px solid var(--border);
+  border-radius:16px;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;
+  padding:14px 10px 10px;transition:border-color .3s;
+  position:relative;
+}
+.phase-box.phase-a{border-color:rgba(0,229,255,.4)}
+.phase-box.phase-b{border-color:rgba(0,230,118,.4)}
+.phase-label{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.phase-box.phase-a .phase-label{color:var(--accent)}
+.phase-box.phase-b .phase-label{color:var(--green)}
+.phase-arrow{
+  flex:0 0 24px;display:flex;align-items:center;justify-content:center;
+  font-size:22px;color:var(--muted);
+}
+/* current phase indicator */
+.phase-box.active-phase{
+  border-width:3px;
+  box-shadow:0 0 20px rgba(0,229,255,.2);
+}
+
+.ref-right{
+  flex:1;display:flex;flex-direction:column;gap:12px;
+  overflow-y:auto;max-height:610px;
+}
+.ref-right::-webkit-scrollbar{width:5px}
+.ref-right::-webkit-scrollbar-track{background:var(--panel)}
+.ref-right::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.step-row{display:flex;gap:11px;align-items:flex-start}
+.step-n{
+  flex-shrink:0;width:26px;height:26px;border-radius:50%;
+  background:var(--accent);color:#000;font-weight:900;
+  font-size:13px;display:flex;align-items:center;justify-content:center;
+}
+.step-t{font-size:15px;color:var(--text);padding-top:3px;line-height:1.4}
+.blist{list-style:none;display:flex;flex-direction:column;gap:7px}
+.blist li{display:flex;gap:9px;align-items:flex-start;font-size:15px;color:var(--text);line-height:1.4}
+.blist li::before{content:'✦';color:var(--green);flex-shrink:0;font-size:11px;margin-top:3px}
+.thresh-box{
+  background:rgba(0,229,255,.05);border:1.5px solid rgba(0,229,255,.18);
+  border-radius:11px;padding:11px 14px;font-size:13px;color:var(--accent);line-height:1.6;
+}
+
+/* ============================================================
+   SCREEN 5 — GAME
+============================================================ */
+#s-game{padding-top:64px}
+.game-wrap{display:flex;width:1280px;height:656px}
+
+/* --- Camera side --- */
+.cam-side{
+  flex:0 0 640px;position:relative;
+  background:#000;overflow:hidden;
+}
+#videoEl{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) scaleX(-1);
+  width:640px;height:480px;object-fit:cover;
+  display:block;
+}
+#poseCanvas{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) scaleX(-1);
+  width:640px;height:480px;pointer-events:none;z-index:5;
+}
+
+/* phase indicator overlay on camera */
+.phase-hud{
+  position:absolute;top:0;left:0;right:0;
+  background:linear-gradient(to bottom,rgba(7,17,31,.92),transparent);
+  height:68px;z-index:6;
+  display:flex;align-items:center;padding:0 14px;gap:10px;
+}
+.ph-box{
+  flex:1;border-radius:10px;padding:8px 12px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  border:1.5px solid var(--border);background:rgba(7,17,31,.6);
+  transition:all .25s;
+}
+.ph-box.ph-active{
+  border-color:var(--accent);background:rgba(0,229,255,.1);
+  box-shadow:0 0 12px rgba(0,229,255,.2);
+}
+.ph-box.ph-done{
+  border-color:var(--green);background:rgba(0,230,118,.08);
+}
+.ph-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.ph-status{font-size:13px;font-weight:800}
+.ph-sep{font-size:18px;color:var(--muted);align-self:center}
+
+/* match ring overlay -->  */
+.match-ring{
+  position:absolute;top:50%;left:50%;
+  width:220px;height:220px;border-radius:50%;
+  transform:translate(-50%,-50%) scaleX(-1);
+  border:4px solid transparent;
+  pointer-events:none;z-index:8;transition:all .2s;
+}
+.match-ring.ok {border-color:var(--green);box-shadow:0 0 40px rgba(0,230,118,.45),inset 0 0 30px rgba(0,230,118,.1)}
+.match-ring.bad{border-color:var(--red);box-shadow:0 0 28px rgba(255,23,68,.35)}
+
+/* score popup */
+.score-pop{
+  position:absolute;top:28%;left:50%;
+  transform:translateX(-50%) scaleX(-1);
+  font-size:40px;font-weight:900;
+  pointer-events:none;z-index:9;opacity:0;
+}
+.score-pop.show{animation:sfloat 1.2s ease-out forwards}
+@keyframes sfloat{
+  0%  {opacity:1;transform:translateX(-50%) scaleX(-1) translateY(0)}
+  100%{opacity:0;transform:translateX(-50%) scaleX(-1) translateY(-80px)}
+}
+
+/* bottom cam strip */
+.cam-bot{
+  position:absolute;bottom:0;left:0;right:0;height:64px;
+  background:linear-gradient(to top,rgba(7,17,31,.95),transparent);
+  z-index:6;display:flex;align-items:center;padding:0 14px;gap:10px;
+}
+
+/* mini ref in camera */
+.cam-ref-mini{
+  position:absolute;bottom:70px;right:10px;
+  width:100px;height:130px;z-index:7;
+  background:rgba(7,17,31,.75);border:1.5px solid var(--border);
+  border-radius:10px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* angle bars on camera right edge */
+.joint-bars{
+  position:absolute;top:74px;right:0;bottom:70px;
+  width:44px;z-index:7;
+  display:flex;flex-direction:column;gap:5px;align-items:center;
+  justify-content:center;padding:4px 0;
+}
+.jbar{width:36px;text-align:center}
+.jbar-lbl{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;line-height:1.1}
+.jbar-track{width:36px;height:8px;border-radius:4px;background:var(--panel);border:1px solid var(--border);overflow:hidden}
+.jbar-fill{height:100%;border-radius:4px;background:var(--red);transition:width .22s,background .22s}
+.jbar-fill.ok{background:var(--green)}
+
+/* no cam -->  */
+#no-cam{
+  position:absolute;inset:0;z-index:30;
+  background:rgba(7,17,31,.97);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:28px;text-align:center;
+}
+
+/* --- Right panel --- */
+.info-side{
+  flex:1;
+  background:var(--glass-bg);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  border-left:1.5px solid var(--glass-border);
+  display:flex;flex-direction:column;
+}
+.info-sec{
+  padding:14px 20px;
+  border-bottom:1px solid var(--glass-border);
+}
+.info-sec:last-child{border-bottom:none;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.sec-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:8px}
+
+/* rep display -->  */
+.rep-big{font-size:58px;font-weight:900;color:var(--green);line-height:1;text-align:center}
+
+/* angle chips -->  */
+.angle-grid{display:flex;flex-wrap:wrap;gap:7px}
+.ang-chip{
+  display:flex;flex-direction:column;align-items:center;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:9px;padding:7px 11px;min-width:76px;
+  transition:border-color .2s,background .2s;
+}
+.ang-chip.ok {border-color:var(--green);background:rgba(0,230,118,.08)}
+.ang-chip.bad{border-color:var(--red);background:rgba(255,23,68,.08)}
+.ang-name{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.ang-val {font-size:19px;font-weight:800;color:var(--text)}
+.ang-tgt {font-size:10px;color:var(--muted)}
+
+/* feedback strip -->  */
+.fb-strip{
+  border-radius:11px;padding:12px 16px;
+  font-size:16px;color:var(--text);line-height:1.45;
+  border:1.5px solid var(--border);background:var(--card);
+  min-height:62px;display:flex;align-items:center;
+  transition:background .25s,border-color .25s;
+}
+.fb-strip.ok {background:rgba(0,230,118,.09);border-color:var(--green);color:var(--green)}
+.fb-strip.bad{background:rgba(255,23,68,.09);border-color:var(--red);color:var(--red)}
+
+/* score live -->  */
+.score-live-num{font-size:40px;font-weight:900;color:var(--yellow);line-height:1;text-align:center}
+
+/* ============================================================
+   SCREEN 6 — SKOR GERAKAN
+============================================================ */
+.mscore-card{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:24px;padding:38px 50px;
+  text-align:center;display:flex;flex-direction:column;
+  align-items:center;gap:16px;width:580px;
+}
+.star-row{display:flex;gap:5px;justify-content:center;font-size:32px}
+
+/* ============================================================
+   SCREEN 7 — HASIL AKHIR
+============================================================ */
+#s-result{
+  background:radial-gradient(ellipse 80% 70% at 50% 0%,rgba(0,229,255,.06),transparent),var(--bg);
+}
+.result-card{
+  background:var(--card);border:2px solid var(--border);
+  border-radius:22px;padding:30px 42px;
+  width:880px;display:flex;flex-direction:column;align-items:center;gap:16px;
+}
+.grade-ring{
+  width:106px;height:106px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;font-weight:900;flex-shrink:0;
+  border:3px solid var(--accent);color:var(--accent);
+  background:rgba(0,229,255,.08);
+}
+.stat-grid{display:flex;gap:14px;width:100%;justify-content:center}
+.stat-b{
+  flex:1;background:var(--panel);border:1.5px solid var(--border);
+  border-radius:13px;padding:13px;text-align:center;max-width:185px;
+}
+.stat-v{font-size:24px;font-weight:900;color:var(--yellow)}
+.stat-l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+.det-list{width:100%;display:flex;flex-direction:column;gap:7px}
+.det-row{
+  display:flex;align-items:center;gap:10px;
+  background:var(--panel);border-radius:9px;padding:9px 13px;
+  font-size:15px;color:var(--text);
+}
+.det-sc{margin-left:auto;font-weight:800;color:var(--yellow);font-size:17px}
+.motiv-box{
+  background:rgba(0,229,255,.05);border:1.5px solid rgba(0,229,255,.16);
+  border-radius:13px;padding:15px 20px;
+  font-size:16px;color:var(--text);text-align:center;line-height:1.6;width:100%;
+}
+.motiv-box em{color:var(--accent);font-style:normal}
+
+/* ============================================================
+   READY OVERLAY — tampil di atas kamera saat menunggu sikap sempurna
+============================================================ */
+.ready-overlay{
+  position:absolute;inset:0;z-index:14;
+  background:linear-gradient(180deg,rgba(7,17,31,.55) 0%,rgba(7,17,31,.85) 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;pointer-events:none;
+  transition:opacity .35s;
+}
+.ready-overlay.hidden{opacity:0;pointer-events:none}
+.ready-badge{
+  background:rgba(0,229,255,.15);border:1.5px solid rgba(0,229,255,.4);
+  border-radius:100px;padding:5px 16px;
+  font-size:11px;font-weight:800;letter-spacing:2px;color:var(--accent);
+  text-transform:uppercase;
+}
+.ready-title{
+  font-size:24px;font-weight:900;color:var(--text);
+  letter-spacing:1px;text-align:center;line-height:1.1;
+  text-shadow:0 0 24px rgba(0,229,255,.4);
+}
+.ready-sub{
+  font-size:12px;color:#bcd;text-align:center;max-width:340px;line-height:1.55;
+  text-shadow:0 1px 4px rgba(0,0,0,.6);
+}
+/* hold-to-start ring */
+.ready-ring{position:relative;width:114px;height:114px}
+.ready-ring svg{transform:rotate(-90deg)}
+.rr-bg  {fill:none;stroke:rgba(0,0,0,.4);stroke-width:9}
+.rr-prog{fill:none;stroke:var(--green);stroke-width:9;stroke-linecap:round;
+         stroke-dasharray:314;stroke-dashoffset:314;transition:stroke-dashoffset .12s linear;
+         filter:drop-shadow(0 0 8px rgba(0,230,118,.6))}
+.rr-num {
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:14px;font-weight:800;color:var(--green);text-align:center;line-height:1.15;
+}
+.rr-num.detecting{color:var(--accent)}
+
+/* === Ready phase checkpoint boxes (Bug 6) === */
+.ready-phase-box{
+  background:rgba(7,17,31,.6);
+  border:2px solid var(--border);
+  border-radius:14px;
+  padding:10px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:5px;width:130px;
+  transition:all .3s;
+  position:relative;
+}
+.ready-phase-box.detecting{
+  border-color:var(--accent);
+  box-shadow:0 0 18px rgba(0,229,255,.3);
+  background:rgba(0,229,255,.08);
+}
+.ready-phase-box.done{
+  border-color:var(--green);
+  box-shadow:0 0 16px rgba(0,230,118,.35);
+  background:rgba(0,230,118,.1);
+}
+.ready-phase-num{
+  position:absolute;top:-10px;left:-10px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--accent);color:#000;
+  font-size:13px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+}
+.ready-phase-box.done .ready-phase-num{background:var(--green)}
+.ready-phase-name{
+  font-size:11px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;font-weight:700;
+}
+.ready-phase-mini{
+  width:80px;height:90px;
+  display:flex;align-items:center;justify-content:center;
+}
+.ready-phase-mini svg{max-width:100%;max-height:100%}
+.ready-phase-stat{
+  font-size:11px;font-weight:800;color:var(--muted);
+  white-space:nowrap;
+}
+.ready-phase-box.detecting .ready-phase-stat{color:var(--accent)}
+.ready-phase-box.done .ready-phase-stat{color:var(--green)}
+/* timer ring in "waiting" mode */
+.tr-prog.waiting{stroke:var(--muted)!important}
+
+/* ============================================================
+   MODAL SYSTEM (Tujuan Belajar, Pengembang, Mood Survey)
+============================================================ */
+.modal-bg{
+  position:absolute;inset:0;z-index:150;
+  background:rgba(2,10,31,.78);
+  display:none;
+  align-items:center;justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(14px) saturate(140%);
+  -webkit-backdrop-filter:blur(14px) saturate(140%);
+}
+.modal-bg.show{display:flex;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.modal-card{
+  background:var(--glass-bg-hi);
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  border:1.5px solid var(--glass-border-bright);
+  border-radius:22px;
+  padding:28px 32px;
+  max-width:600px;width:100%;
+  max-height:84%;overflow-y:auto;
+  position:relative;
+  display:flex;flex-direction:column;gap:12px;
+  box-shadow:0 25px 70px rgba(0,8,30,.7),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.modal-card::-webkit-scrollbar{width:6px}
+.modal-card::-webkit-scrollbar-track{background:var(--bg)}
+.modal-card::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.modal-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;border-radius:50%;
+  background:var(--card);border:1.5px solid var(--border);
+  color:var(--text);font-size:16px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;z-index:5;
+}
+.modal-close:hover{border-color:var(--red);color:var(--red);transform:rotate(90deg)}
+
+/* === Developer photo === */
+.dev-photo{
+  width:140px;height:140px;border-radius:50%;
+  border:4px solid var(--accent);
+  overflow:hidden;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--card);
+  box-shadow:0 0 30px rgba(0,229,255,.25);
+  position:relative;
+}
+.dev-photo img{width:100%;height:100%;object-fit:cover}
+.dev-avatar-fallback{font-size:42px}
+
+/* === Mood emoji rating === */
+.mood-row{
+  display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+  margin-top:8px;
+}
+.mood-btn{
+  background:var(--card);border:2.5px solid var(--border);
+  border-radius:18px;
+  width:88px;height:108px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  cursor:pointer;transition:all .22s;
+  font-family:inherit;user-select:none;
+}
+.mood-btn:hover{transform:translateY(-4px) scale(1.04);border-color:var(--accent)}
+.mood-btn.selected{
+  border-color:var(--green);
+  background:rgba(0,230,118,.12);
+  box-shadow:0 6px 24px rgba(0,230,118,.3);
+  transform:scale(1.06);
+}
+.mood-face{font-size:36px;line-height:1}
+.mood-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.mood-btn.selected .mood-label{color:var(--green)}
+
+/* === Achievement badges in result === */
+.achievement-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;
+}
+.ach-item{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:12px;padding:11px 14px;
+  display:flex;align-items:center;gap:10px;
+  transition:all .2s;
+}
+.ach-item.unlocked{
+  border-color:var(--green);
+  background:linear-gradient(135deg,rgba(0,230,118,.08),rgba(0,229,255,.04));
+}
+.ach-item.locked{opacity:.45}
+.ach-icon{font-size:22px;flex-shrink:0}
+.ach-info{flex:1;min-width:0}
+.ach-title{font-size:13px;font-weight:800;color:var(--text);line-height:1.2}
+.ach-item.locked .ach-title{color:var(--muted)}
+.ach-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3}
+
+/* === Watermark signature === */
+.dev-signature{
+
+/* === GRADING TIER (Bronze/Silver/Gold/Platinum/Diamond) === */
+.tier-display{
+  display:flex;align-items:center;gap:18px;width:100%;
+  background:linear-gradient(135deg,rgba(255,215,0,.08),rgba(0,217,255,.06));
+  border:1.5px solid var(--glass-border-bright);
+  border-radius:18px;padding:18px 22px;
+  backdrop-filter:var(--glass-blur);
+  -webkit-backdrop-filter:var(--glass-blur);
+  box-shadow:var(--glass-shadow);
+  position:relative;overflow:hidden;
+}
+.tier-display::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 20% 50%, rgba(255,215,0,.12), transparent 60%);
+  pointer-events:none;
+}
+.tier-medal{
+  font-size:48px;line-height:1;flex-shrink:0;
+  animation:tierBounce 2s ease-in-out infinite;
+  filter:drop-shadow(0 4px 16px currentColor);
+}
+@keyframes tierBounce{
+  0%,100%{transform:translateY(0) rotate(-3deg)}
+  50%{transform:translateY(-4px) rotate(3deg)}
+}
+.tier-info{flex:1;position:relative;z-index:2}
+.tier-name{
+  font-size:26px;font-weight:900;letter-spacing:2px;
+  text-transform:uppercase;line-height:1.1;
+  background:linear-gradient(90deg,#ffd700,#fff,#ffd700);
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:tierShimmer 3s linear infinite;
+}
+@keyframes tierShimmer{to{background-position:200% center}}
+.tier-name.bronze{background:linear-gradient(90deg,#cd7f32,#e8a86a,#cd7f32);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.tier-name.silver{background:linear-gradient(90deg,#9ba2ad,#e0e6f0,#9ba2ad);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.tier-name.gold{background:linear-gradient(90deg,#d4a017,#ffd700,#d4a017);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.tier-name.platinum{background:linear-gradient(90deg,#9ec8ff,#e5e4e2,#9ec8ff);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.tier-name.diamond{background:linear-gradient(90deg,#00d9ff,#b9f2ff,#00d9ff);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.tier-desc{font-size:14px;color:var(--text-dim);margin-top:4px}
+
+/* === RPE Scale === */
+.rpe-scale{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.rpe-btn{
+  background:var(--glass-bg);
+  border:2px solid var(--glass-border);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border-radius:14px;
+  width:84px;padding:10px 4px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;transition:all .22s;
+  font-family:inherit;user-select:none;color:var(--text);
+}
+.rpe-btn:hover{transform:translateY(-3px);border-color:var(--orange)}
+.rpe-btn.selected{
+  border-color:var(--orange);
+  background:rgba(255,138,61,.15);
+  box-shadow:0 6px 22px rgba(255,138,61,.35);
+}
+.rpe-emoji{font-size:26px;line-height:1}
+.rpe-num{font-size:13px;font-weight:900;color:var(--orange);letter-spacing:.5px}
+.rpe-lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.3px;line-height:1.2;text-align:center}
+
+/* === History Modal Table === */
+.hist-table{width:100%;font-size:13px;color:var(--text);border-collapse:collapse}
+.hist-table th,.hist-table td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--glass-border)}
+.hist-table th{font-size:11px;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;font-weight:800}
+.hist-table tr:hover{background:rgba(0,217,255,.05)}
+.hist-tier{
+  display:inline-block;padding:2px 8px;border-radius:100px;
+  font-size:10px;font-weight:900;letter-spacing:.5px;
+}
+.ht-bronze{background:rgba(205,127,50,.18);color:#cd7f32;border:1px solid rgba(205,127,50,.4)}
+.ht-silver{background:rgba(192,192,192,.18);color:#c0c0c0;border:1px solid rgba(192,192,192,.4)}
+.ht-gold  {background:rgba(255,215,0,.18);color:#ffd700;border:1px solid rgba(255,215,0,.4)}
+.ht-platinum{background:rgba(229,228,226,.18);color:#e5e4e2;border:1px solid rgba(229,228,226,.4)}
+.ht-diamond {background:rgba(185,242,255,.18);color:#b9f2ff;border:1px solid rgba(185,242,255,.4)}
+
+.dev-signature{
+  position:absolute;bottom:8px;left:8px;
+  font-family:'Brush Script MT','Lucida Handwriting',cursive;
+  font-size:13px;color:var(--muted);opacity:.45;
+  pointer-events:none;z-index:90;
+  letter-spacing:.5px;
+  text-shadow:0 1px 2px rgba(0,0,0,.5);
+}
+.dev-signature .sig-name{
+  color:var(--accent);font-weight:bold;font-style:italic;
+}
+
+/* ============================================================
+   OVERLAY / CONFETTI / LOADING
+============================================================ */
+#overlay{
+  position:absolute;inset:0;z-index:100;
+  background:var(--bg);pointer-events:none;
+  opacity:0;transition:opacity .28s;
+}
+#overlay.in{opacity:1;pointer-events:all}
+#confetti-canvas{position:absolute;inset:0;z-index:50;pointer-events:none}
+
+#loading-modal{
+  position:absolute;inset:0;z-index:200;
+  background:rgba(7,17,31,.94);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+}
+.spinner{
+  width:52px;height:52px;border-radius:50%;
+  border:4px solid var(--border);border-top-color:var(--accent);
+  animation:spin .85s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============================================================
+   ANIMATIONS
+============================================================ */
+@keyframes slideUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+@keyframes bounceIn{
+  0%{transform:scale(.35);opacity:0}60%{transform:scale(1.1)}
+  80%{transform:scale(.95)}100%{transform:scale(1);opacity:1}
+}
+@keyframes pulseBtn{0%,100%{transform:scale(1)}50%{transform:scale(1.055)}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.anim-up    {animation:slideUp .48s ease both}
+.anim-bounce{animation:bounceIn .58s cubic-bezier(.175,.885,.32,1.275) both}
+.anim-pulse {animation:pulseBtn 2s ease-in-out infinite}
+.anim-float {animation:floatY 3.2s ease-in-out infinite}
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+.flex-col{display:flex;flex-direction:column}
+.flex-row{display:flex;flex-direction:row}
+.ic{align-items:center}.jc{justify-content:center}
+.g4{gap:4px}.g8{gap:8px}.g12{gap:12px}.g16{gap:16px}
+.g20{gap:20px}.g24{gap:24px}.g32{gap:32px}
+.tc{text-align:center}.w100{width:100%}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.c-a{color:var(--accent)}.c-g{color:var(--green)}
+.c-y{color:var(--yellow)}.c-r{color:var(--red)}
+.c-m{color:var(--muted)}.c-t{color:var(--text)}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="overlay"></div>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- ======== LOADING MODAL ======== -->
+  <div id="loading-modal">
+    <div class="spinner"></div>
+    <div class="t-sub c-a">Memuat Model AI Pose Detection…</div>
+    <div class="t-sm c-m" id="load-msg">Mengunduh MediaPipe Pose (±6MB, sekali saja)</div>
+    <div style="width:300px" class="pbar-wrap mt8">
+      <div class="pbar" id="load-bar" style="width:5%"></div>
+    </div>
+    <div class="t-xs c-m" style="max-width:340px;text-align:center;line-height:1.6;margin-top:4px">
+      Diperlukan koneksi internet untuk pertama kali. Setelah model terunduh, file tersimpan di cache browser dan dapat dimainkan offline.
+    </div>
+  </div>
+
+  <!-- ======== HUD (global) ======== -->
+  <div id="hud">
+    <div class="hud-item">
+      <span class="hud-lbl">Pemain</span>
+      <span class="hud-val c-a" id="h-name">—</span>
+    </div>
+    <div class="hud-div"></div>
+    <div class="hud-item">
+      <span class="hud-lbl">Gerakan</span>
+      <span class="hud-val" id="h-mov">—</span>
+    </div>
+    <div style="flex:1"></div>
+    <div class="hud-item">
+      <span class="hud-lbl">Skor Total</span>
+      <span class="hud-val c-y" id="h-score">0</span>
+    </div>
+    <div class="hud-div"></div>
+    <div class="hud-item">
+      <span class="hud-lbl">Selesai</span>
+      <span class="hud-val c-g" id="h-done">0/3</span>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 1: INTRO
+  ====================================================== -->
+  <div id="s-intro" class="screen active">
+    <div class="intro-bg-fig anim-float">
+      <svg width="400" height="540" viewBox="0 0 400 540" fill="none">
+        <circle cx="200" cy="68" r="52" fill="#00e5ff" opacity=".12"/>
+        <line x1="200" y1="120" x2="190" y2="250" stroke="#00e5ff" stroke-width="16" stroke-linecap="round" opacity=".15"/>
+        <line x1="195" y1="170" x2="95"  y2="140" stroke="#00e676" stroke-width="14" stroke-linecap="round" opacity=".14"/>
+        <line x1="195" y1="170" x2="295" y2="195" stroke="#00e676" stroke-width="14" stroke-linecap="round" opacity=".14"/>
+        <line x1="190" y1="250" x2="145" y2="375" stroke="#00e5ff" stroke-width="15" stroke-linecap="round" opacity=".15"/>
+        <line x1="190" y1="250" x2="248" y2="368" stroke="#fdd835" stroke-width="15" stroke-linecap="round" opacity=".14"/>
+        <line x1="145" y1="375" x2="118" y2="470" stroke="#00e5ff" stroke-width="13" stroke-linecap="round" opacity=".13"/>
+        <line x1="248" y1="368" x2="272" y2="460" stroke="#fdd835" stroke-width="13" stroke-linecap="round" opacity=".13"/>
+      </svg>
+    </div>
+    <div class="hero-wrap anim-up">
+      <div class="pill pill-a">PJOK · KELAS 6 SD · KEBUGARAN JASMANI</div>
+      <div>
+        <div class="t-hero c-t">GIM <span class="c-a glow-a">KEBUGARAN</span></div>
+        <div class="t-hero c-t">JASMANI</div>
+        <div class="pill pill-g mt8" style="font-size:11px">📷 REAL-TIME POSE DETECTION · KAMERA</div>
+      </div>
+      <div class="t-body c-m" style="max-width:500px">
+        Ikuti 3 gerakan kebugaran yang ditampilkan! Kamera mendeteksi gerakanmu secara <em class="c-a">real-time</em> dan memberi skor otomatis.
+      </div>
+      <div class="flex-row g12" style="flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg anim-pulse" onclick="startSolo()">▶ SOLO MAIN</button>
+        <button class="btn btn-orange btn-md" onclick="openModal('m-versus')">⚔️ Versus Mode</button>
+        <button class="btn btn-ghost btn-md" onclick="openModal('m-tujuan')">🎯 Tujuan Belajar</button>
+        <button class="btn btn-ghost btn-md" onclick="openModal('m-dev')">👨‍🏫 Pengembang</button>
+      </div>
+      <div class="t-xs c-m" style="max-width:440px;line-height:1.65">
+        ⚠ Membutuhkan internet untuk pertama kali (unduh model AI ~6MB). Setelah itu tersimpan di cache dan dapat dimainkan offline.
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 2: SETUP
+  ====================================================== -->
+  <div id="s-setup" class="screen" style="background:
+    radial-gradient(ellipse 60% 50% at 50% 30%, rgba(0,255,157,.10), transparent 65%),
+    radial-gradient(ellipse 90% 40% at 20% 100%, rgba(255,138,61,.08), transparent 60%),
+    linear-gradient(140deg, #061d2f 0%, #0a2e3d 50%, #042430 100%)">
+    <div class="flex-col ic g24 anim-up" style="width:520px;position:relative;z-index:2">
+      <div class="tc">
+        <div class="t-title c-a glow-a">Siapa Kamu?</div>
+        <div class="t-sm c-m mt8">Masukkan nama & pilih durasi per gerakan</div>
+      </div>
+      <input id="inp-name" class="field" style="width:320px" type="text"
+             maxlength="24" placeholder="Nama lengkap kamu…" autocomplete="off"/>
+      <div class="flex-col ic g10 w100">
+        <div class="t-xs c-m" style="text-transform:uppercase;letter-spacing:1px">Durasi per Gerakan</div>
+        <div class="dur-pills">
+          <div class="dur-p on" data-d="30" onclick="pickDur(this)">30 detik</div>
+          <div class="dur-p"    data-d="45" onclick="pickDur(this)">45 detik</div>
+          <div class="dur-p"    data-d="60" onclick="pickDur(this)">60 detik</div>
+        </div>
+      </div>
+      <div class="flex-row g12 mt8">
+        <button class="btn btn-ghost btn-sm" onclick="go('s-setup','s-intro')">← Kembali</button>
+        <button class="btn btn-green btn-md" onclick="confirmSetup()">Lanjut →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 3: PILIH GERAKAN
+  ====================================================== -->
+  <div id="s-select" class="screen" style="padding-top:64px;background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,.12), transparent 60%), linear-gradient(160deg, var(--bg-deep) 0%, var(--bg) 100%)">
+    <div style="padding-top:22px;width:100%;display:flex;flex-direction:column;align-items:center;gap:20px">
+      <div class="tc anim-up">
+        <div class="t-sub c-a">Pilih Gerakan</div>
+        <div class="t-sm c-m mt8">Selesaikan semua 3 gerakan untuk mendapat nilai akhir</div>
+      </div>
+      <div class="mov-grid" id="mov-grid"></div>
+      <div class="flex-row g12 mt12">
+        <button class="btn btn-ghost btn-sm" onclick="confirmHome()">🏠 Kembali ke Beranda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 4: POSE REFERENSI (dual phase)
+  ====================================================== -->
+  <div id="s-ref" class="screen" style="background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,.10), transparent 60%), linear-gradient(160deg, var(--bg-deep) 0%, var(--bg) 100%)">
+    <div class="ref-layout anim-up">
+
+      <!-- DUAL POSE SVG -->
+      <div class="dual-pose">
+        <div class="t-sm c-m tc" style="letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:2px">
+          Dua Fase Gerakan
+        </div>
+        <div class="phase-row">
+          <!-- Phase A -->
+          <div class="phase-box phase-a">
+            <div class="phase-label">① Fase AWAL</div>
+            <div id="ref-svg-a" style="display:flex;align-items:center;justify-content:center;width:100%;flex:1"></div>
+            <div class="t-xs c-m tc mt8" id="ref-phase-a-lbl" style="font-weight:700"></div>
+          </div>
+          <div class="phase-arrow">⇄</div>
+          <!-- Phase B -->
+          <div class="phase-box phase-b">
+            <div class="phase-label">② Fase AKHIR</div>
+            <div id="ref-svg-b" style="display:flex;align-items:center;justify-content:center;width:100%;flex:1"></div>
+            <div class="t-xs c-m tc mt8" id="ref-phase-b-lbl" style="font-weight:700"></div>
+          </div>
+        </div>
+        <div class="thresh-box" id="ref-thresh"></div>
+      </div>
+
+      <!-- INFO -->
+      <div class="ref-right">
+        <div>
+          <div class="t-sub c-t" id="ref-title"></div>
+          <div class="t-sm c-m mt8" id="ref-desc"></div>
+        </div>
+        <div class="card flex-col g8">
+          <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">✦ Manfaat Kesehatan</div>
+          <ul class="blist" id="ref-benefits"></ul>
+        </div>
+        <div class="card flex-col g8">
+          <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">📋 Cara Melakukan</div>
+          <div id="ref-steps" class="flex-col g7"></div>
+        </div>
+        <div class="flex-row g12 mt8">
+          <button class="btn btn-ghost btn-sm" onclick="go('s-ref','s-select')">← Ganti</button>
+          <button class="btn btn-primary btn-md" onclick="startGame()">📷 Mulai Deteksi →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 5: GAME — POSE DETECTION
+  ====================================================== -->
+  <div id="s-game" class="screen">
+    <div class="game-wrap">
+
+      <!-- CAMERA SIDE -->
+      <div class="cam-side">
+        <video id="videoEl" playsinline autoplay muted></video>
+        <canvas id="poseCanvas" width="640" height="480"></canvas>
+
+        <!-- phase HUD top -->
+        <div class="phase-hud" id="phase-hud">
+          <div class="ph-box" id="ph-box-a">
+            <div class="ph-title" id="ph-a-title">Fase Awal</div>
+            <div class="ph-status" id="ph-a-status">–</div>
+          </div>
+          <div class="ph-sep">⇄</div>
+          <div class="ph-box" id="ph-box-b">
+            <div class="ph-title" id="ph-b-title">Fase Akhir</div>
+            <div class="ph-status" id="ph-b-status">–</div>
+          </div>
+          <div style="flex:0 0 8px"></div>
+          <!-- timer -->
+          <div class="timer-ring">
+            <svg width="116" height="116" viewBox="0 0 116 116">
+              <circle class="tr-bg"   cx="58" cy="58" r="53"/>
+              <circle class="tr-prog" id="tr-prog" cx="58" cy="58" r="53"/>
+            </svg>
+            <div class="tr-num" id="tr-num">30</div>
+          </div>
+        </div>
+
+        <!-- match ring -->
+        <div class="match-ring" id="match-ring"></div>
+
+        <!-- score popup -->
+        <div class="score-pop" id="score-pop">+10</div>
+
+        <!-- mini ref -->
+        <div class="cam-ref-mini" id="cam-ref-mini"></div>
+
+        <!-- joint bars -->
+        <div class="joint-bars" id="joint-bars"></div>
+
+        <!-- READY OVERLAY: tampil saat menunggu user demo sikap sempurna + 2 fase gerakan -->
+        <div class="ready-overlay" id="ready-overlay">
+          <div class="ready-badge">⏸ PERSIAPAN</div>
+          <div class="ready-title" id="ready-title">3 LANGKAH PERSIAPAN</div>
+          <div class="ready-sub" id="ready-sub">
+            Tunjukkan sikap sempurna dulu, lalu dua fase gerakan agar sistem yakin kamera dapat membaca tubuhmu.
+          </div>
+
+          <!-- 3 checkpoint: SIKAP SEMPURNA → FASE AWAL → FASE AKHIR -->
+          <div style="display:flex;gap:10px;align-items:center;margin-top:4px;flex-wrap:nowrap">
+            <div class="ready-phase-box" id="ready-ps">
+              <div class="ready-phase-num">①</div>
+              <div class="ready-phase-name">Sikap Sempurna</div>
+              <div class="ready-phase-mini" id="ready-ps-svg">
+                <svg width="46" height="80" viewBox="0 0 46 80" fill="none">
+                  <circle cx="23" cy="10" r="7" fill="#00d9ff" opacity=".9"/>
+                  <line x1="23" y1="17" x2="23" y2="48" stroke="#00d9ff" stroke-width="3.5" stroke-linecap="round"/>
+                  <line x1="23" y1="24" x2="13" y2="44" stroke="#00ff9d" stroke-width="3" stroke-linecap="round"/>
+                  <line x1="23" y1="24" x2="33" y2="44" stroke="#00ff9d" stroke-width="3" stroke-linecap="round"/>
+                  <line x1="23" y1="48" x2="18" y2="72" stroke="#00d9ff" stroke-width="3.5" stroke-linecap="round"/>
+                  <line x1="23" y1="48" x2="28" y2="72" stroke="#00d9ff" stroke-width="3.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="ready-phase-stat" id="ready-ps-stat">⏳ Tunggu</div>
+            </div>
+            <div style="color:var(--muted);font-size:15px">→</div>
+            <div class="ready-phase-box" id="ready-pa">
+              <div class="ready-phase-num">②</div>
+              <div class="ready-phase-name" id="ready-pa-name">Fase Awal</div>
+              <div class="ready-phase-mini" id="ready-pa-svg"></div>
+              <div class="ready-phase-stat" id="ready-pa-stat">🔒 Terkunci</div>
+            </div>
+            <div style="color:var(--muted);font-size:15px">→</div>
+            <div class="ready-phase-box" id="ready-pb">
+              <div class="ready-phase-num">③</div>
+              <div class="ready-phase-name" id="ready-pb-name">Fase Akhir</div>
+              <div class="ready-phase-mini" id="ready-pb-svg"></div>
+              <div class="ready-phase-stat" id="ready-pb-stat">🔒 Terkunci</div>
+            </div>
+          </div>
+
+          <!-- countdown ring (muncul setelah ketiganya lulus) -->
+          <div class="ready-ring" id="ready-ring-wrap" style="display:none">
+            <svg width="114" height="114" viewBox="0 0 114 114">
+              <circle class="rr-bg"   cx="57" cy="57" r="50"/>
+              <circle class="rr-prog" id="rr-prog" cx="57" cy="57" r="50"/>
+            </svg>
+            <div class="rr-num" id="rr-num">3</div>
+          </div>
+        </div>
+
+        <!-- bottom strip -->
+        <div class="cam-bot">
+          <div class="pill pill-a" id="cam-pill" style="font-size:10px">● KAMERA AKTIF</div>
+          <div style="flex:1"></div>
+          <button class="btn btn-orange btn-sm" id="btn-restart" onclick="restartCurrentMove()" style="font-size:12px;display:none">
+            🔄 ULANG (1×)
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="finishEarly()" style="font-size:12px">⏭ Selesai</button>
+        </div>
+
+        <!-- no cam -->
+        <div id="no-cam">
+          <div style="font-size:38px">📵</div>
+          <div class="t-sub c-r">Kamera Tidak Tersedia</div>
+          <div class="t-body c-m" style="max-width:340px">Izinkan akses kamera di browser, lalu muat ulang halaman.</div>
+          <button class="btn btn-orange btn-sm" onclick="retryCam()">🔄 Coba Lagi</button>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="info-side">
+
+        <!-- rep counter -->
+        <div class="info-sec flex-col ic g4" style="padding:18px 20px">
+          <div class="sec-lbl">Repetisi Terdeteksi</div>
+          <div class="rep-big" id="rep-count">0</div>
+          <div class="t-xs c-m" style="margin-top:2px">
+            Target: <span class="c-y" id="rep-tgt">10</span> reps
+          </div>
+        </div>
+
+        <!-- angle chips live -->
+        <div class="info-sec flex-col g8">
+          <div class="sec-lbl">🔬 Sudut Sendi Real-time</div>
+          <div class="angle-grid" id="angle-grid"></div>
+        </div>
+
+        <!-- feedback -->
+        <div class="info-sec flex-col g8">
+          <div class="sec-lbl">💬 Petunjuk</div>
+          <div class="fb-strip" id="fb-strip">Berdirilah di depan kamera — pastikan seluruh tubuh terlihat!</div>
+        </div>
+
+        <!-- score -->
+        <div class="info-sec">
+          <div class="sec-lbl tc">Skor Sesi</div>
+          <div class="score-live-num" id="sess-score">0</div>
+          <div class="t-xs c-m tc">poin</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 6: SKOR GERAKAN
+  ====================================================== -->
+  <div id="s-mscore" class="screen" style="background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,217,255,.12), transparent 60%), linear-gradient(160deg, var(--bg-deep) 0%, var(--bg) 100%)">
+    <div class="mscore-card anim-bounce">
+      <div style="font-size:38px" id="ms-icon">⭐</div>
+      <div class="t-sub c-a" id="ms-title">Gerakan Selesai!</div>
+      <div class="star-row" id="ms-stars">⭐⭐⭐</div>
+      <div class="flex-col ic g4">
+        <div class="t-xs c-m" style="text-transform:uppercase;letter-spacing:1px">Skor Gerakan</div>
+        <div class="t-hero c-y" id="ms-score">0</div>
+      </div>
+      <div class="flex-row g14 w100 jc">
+        <div class="stat-b"><div class="stat-v c-g" id="ms-reps">0</div><div class="stat-l">Reps</div></div>
+        <div class="stat-b"><div class="stat-v c-a" id="ms-acc">0%</div><div class="stat-l">Akurasi</div></div>
+      </div>
+      <div class="t-body c-m tc" id="ms-msg" style="max-width:400px;line-height:1.6"></div>
+      <div class="flex-row g12">
+        <button class="btn btn-ghost btn-sm" onclick="go('s-mscore','s-select',refreshSelect)">← Gerakan Lain</button>
+        <button class="btn btn-primary btn-md" id="ms-next-btn" onclick="checkMore()">Lanjut →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       SCREEN 7: HASIL AKHIR
+  ====================================================== -->
+  <div id="s-result" class="screen" style="background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,.10), transparent 60%), linear-gradient(160deg, var(--bg-deep) 0%, var(--bg) 100%);align-items:center;justify-content:flex-start;padding:20px 0">
+    <div style="width:100%;max-height:680px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:10px 20px">
+    <div class="result-card anim-up" style="max-width:880px">
+      <div class="t-sub c-a glow-a">🏆 Hasil Akhir</div>
+      <div class="flex-row ic g20 w100">
+        <div class="grade-ring" id="r-grade">A</div>
+        <div class="flex-col g8">
+          <div class="t-title c-t" id="r-name">—</div>
+          <div class="t-body c-m" id="r-sub">—</div>
+        </div>
+      </div>
+
+      <!-- === GRADING TIER (Bronze/Silver/Gold/Platinum/Diamond) === -->
+      <div class="tier-display" id="r-tier-display">
+        <div class="tier-medal" id="r-tier-medal">🥇</div>
+        <div class="tier-info">
+          <div class="tier-name" id="r-tier-name">GOLD</div>
+          <div class="tier-desc" id="r-tier-desc">Performansi sangat baik</div>
+        </div>
+      </div>
+
+      <!-- === STATISTIK UTAMA === -->
+      <div class="stat-grid">
+        <div class="stat-b"><div class="stat-v" id="r-total">0</div><div class="stat-l">Total Skor</div></div>
+        <div class="stat-b"><div class="stat-v" id="r-reps">0</div><div class="stat-l">Total Reps</div></div>
+        <div class="stat-b"><div class="stat-v" id="r-acc">0%</div><div class="stat-l">Rata Akurasi</div></div>
+        <div class="stat-b"><div class="stat-v" id="r-moves">0/3</div><div class="stat-l">Gerakan</div></div>
+      </div>
+
+      <!-- === REKAP PER GERAKAN === -->
+      <div class="flex-col g8 w100">
+        <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">📊 Rekap Per Gerakan</div>
+        <div class="det-list" id="r-details"></div>
+      </div>
+
+      <!-- === CAPAIAN / ACHIEVEMENT === -->
+      <div class="flex-col g8 w100">
+        <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">🏅 Capaian Yang Diraih</div>
+        <div class="achievement-grid" id="r-achievements"></div>
+      </div>
+
+      <!-- === RPE SCALE (Rating of Perceived Exertion) === -->
+      <div class="card flex-col g12 w100" style="background:rgba(255,138,61,.06);border-color:rgba(255,138,61,.25)">
+        <div class="t-sub c-y tc" style="font-size:20px;color:var(--orange)">🌡️ Skala RPE — Tingkat Kelelahanmu</div>
+        <div class="t-sm c-m tc">Rating of Perceived Exertion — seberapa lelah tubuhmu setelah latihan?</div>
+        <div class="rpe-scale" id="r-rpe-scale">
+          <button class="rpe-btn" data-rpe="1" onclick="pickRPE(1)">
+            <div class="rpe-emoji">😎</div>
+            <div class="rpe-num">1-2</div>
+            <div class="rpe-lbl">Sangat<br>Ringan</div>
+          </button>
+          <button class="rpe-btn" data-rpe="2" onclick="pickRPE(2)">
+            <div class="rpe-emoji">🙂</div>
+            <div class="rpe-num">3-4</div>
+            <div class="rpe-lbl">Ringan</div>
+          </button>
+          <button class="rpe-btn" data-rpe="3" onclick="pickRPE(3)">
+            <div class="rpe-emoji">😅</div>
+            <div class="rpe-num">5-6</div>
+            <div class="rpe-lbl">Sedang</div>
+          </button>
+          <button class="rpe-btn" data-rpe="4" onclick="pickRPE(4)">
+            <div class="rpe-emoji">😰</div>
+            <div class="rpe-num">7-8</div>
+            <div class="rpe-lbl">Berat</div>
+          </button>
+          <button class="rpe-btn" data-rpe="5" onclick="pickRPE(5)">
+            <div class="rpe-emoji">🥵</div>
+            <div class="rpe-num">9-10</div>
+            <div class="rpe-lbl">Sangat<br>Berat</div>
+          </button>
+        </div>
+        <div class="t-body c-t tc" id="r-rpe-reply" style="min-height:24px;line-height:1.5"></div>
+      </div>
+
+      <!-- === MOOD SURVEY === -->
+      <div class="card flex-col g12 w100" style="background:rgba(0,217,255,.06);border-color:rgba(0,217,255,.25)">
+        <div class="t-sub c-a tc" style="font-size:20px">💭 Bagaimana perasaanmu setelah latihan?</div>
+        <div class="t-sm c-m tc">Pilih salah satu emoji yang paling mewakili perasaanmu</div>
+        <div class="mood-row" id="r-mood-row">
+          <button class="mood-btn" data-mood="1" onclick="pickMood(1)">
+            <div class="mood-face">😫</div>
+            <div class="mood-label">Sangat<br>Lelah</div>
+          </button>
+          <button class="mood-btn" data-mood="2" onclick="pickMood(2)">
+            <div class="mood-face">😟</div>
+            <div class="mood-label">Lelah</div>
+          </button>
+          <button class="mood-btn" data-mood="3" onclick="pickMood(3)">
+            <div class="mood-face">😐</div>
+            <div class="mood-label">Biasa<br>Saja</div>
+          </button>
+          <button class="mood-btn" data-mood="4" onclick="pickMood(4)">
+            <div class="mood-face">😊</div>
+            <div class="mood-label">Senang</div>
+          </button>
+          <button class="mood-btn" data-mood="5" onclick="pickMood(5)">
+            <div class="mood-face">🤩</div>
+            <div class="mood-label">Sangat<br>Bersemangat</div>
+          </button>
+        </div>
+        <div class="t-body c-t tc" id="r-mood-reply" style="min-height:24px;line-height:1.5"></div>
+      </div>
+
+      <!-- === JURNAL REFLEKSI MINI === -->
+      <div class="card flex-col g10 w100" style="background:rgba(122,249,255,.05);border-color:rgba(122,249,255,.2)">
+        <div class="t-sub c-a" style="font-size:18px">📔 Jurnal Refleksi</div>
+        <div class="t-sm c-m">Apa manfaat aktivitas ini untuk kehidupan sehari-harimu?</div>
+        <div id="r-reflection" class="t-body c-t" style="line-height:1.65"></div>
+      </div>
+
+      <!-- === MOTIVASI === -->
+      <div class="motiv-box" id="r-motiv"></div>
+
+      <!-- === RESEARCHER TOOLS === -->
+      <div class="card flex-col g8 w100" style="background:rgba(59,130,246,.06);border-color:rgba(59,130,246,.2)">
+        <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">📈 Data Penelitian & Analitik</div>
+        <div class="t-sm c-m">Riwayat permainan & data biomekanika tersimpan otomatis di browser. Unduh untuk analisis lebih lanjut.</div>
+        <div class="flex-row g8" style="flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📊 Unduh CSV (Ringkasan)</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportDetailCSV()">🔬 Unduh Data Biomekanika</button>
+          <button class="btn btn-ghost btn-sm" onclick="showHistoryModal()">📚 Riwayat Sesi</button>
+        </div>
+      </div>
+
+      <div class="flex-row g12">
+        <button class="btn btn-ghost btn-sm" onclick="resetGame()">🔁 Main Lagi</button>
+        <button class="btn btn-primary btn-sm" onclick="go('s-result','s-intro',resetGame)">🏠 Menu</button>
+      </div>
+    </div>
+    </div><!-- end scroll wrapper -->
+  </div>
+
+  <!-- ======================================================
+       MODAL: HASIL VERSUS — pertandingan 2 pemain
+  ====================================================== -->
+  <div class="modal-bg" id="m-vs-result">
+    <div class="modal-card anim-bounce" style="max-width:780px">
+      <button class="modal-close" onclick="closeModal('m-vs-result')">✕</button>
+      <div class="flex-col ic g8">
+        <div style="font-size:42px">🏆</div>
+        <div class="t-sub c-a glow-a">HASIL PERTANDINGAN</div>
+        <div class="pill pill-y">⚔️ VERSUS MODE</div>
+      </div>
+
+      <!-- Winner banner -->
+      <div id="vs-winner-banner" class="card flex-col ic g8" style="margin-top:10px;padding:20px;text-align:center">
+        <div style="font-size:34px" id="vs-winner-icon">🥇</div>
+        <div class="t-title c-y" id="vs-winner-name" style="font-size:23px">—</div>
+        <div class="t-sm c-m" id="vs-winner-detail">—</div>
+      </div>
+
+      <!-- 2 player comparison -->
+      <div class="flex-row g12 w100">
+        <div class="card flex-col g8" style="flex:1;border-color:rgba(0,217,255,.4)">
+          <div class="t-xs" style="color:var(--accent);text-transform:uppercase;letter-spacing:1px;font-weight:800">🔵 PEMAIN 1</div>
+          <div class="t-sub c-t" id="vs-p1-name" style="font-size:20px">—</div>
+          <div class="stat-grid" style="gap:8px">
+            <div class="stat-b" style="padding:8px"><div class="stat-v" id="vs-p1-score" style="font-size:19px">0</div><div class="stat-l">Skor</div></div>
+            <div class="stat-b" style="padding:8px"><div class="stat-v c-g" id="vs-p1-reps" style="font-size:19px">0</div><div class="stat-l">Reps</div></div>
+            <div class="stat-b" style="padding:8px"><div class="stat-v c-a" id="vs-p1-acc" style="font-size:19px">0%</div><div class="stat-l">Akurasi</div></div>
+          </div>
+          <div id="vs-p1-tier" class="hist-tier" style="align-self:center;font-size:12px;padding:4px 14px">—</div>
+        </div>
+        <div class="card flex-col g8" style="flex:1;border-color:rgba(255,138,61,.4)">
+          <div class="t-xs" style="color:var(--orange);text-transform:uppercase;letter-spacing:1px;font-weight:800">🟠 PEMAIN 2</div>
+          <div class="t-sub c-t" id="vs-p2-name" style="font-size:20px">—</div>
+          <div class="stat-grid" style="gap:8px">
+            <div class="stat-b" style="padding:8px"><div class="stat-v" id="vs-p2-score" style="font-size:19px">0</div><div class="stat-l">Skor</div></div>
+            <div class="stat-b" style="padding:8px"><div class="stat-v c-g" id="vs-p2-reps" style="font-size:19px">0</div><div class="stat-l">Reps</div></div>
+            <div class="stat-b" style="padding:8px"><div class="stat-v c-a" id="vs-p2-acc" style="font-size:19px">0%</div><div class="stat-l">Akurasi</div></div>
+          </div>
+          <div id="vs-p2-tier" class="hist-tier" style="align-self:center;font-size:12px;padding:4px 14px">—</div>
+        </div>
+      </div>
+
+      <!-- Per-move comparison table -->
+      <div class="card flex-col g6 w100">
+        <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">📊 Rincian Per Gerakan</div>
+        <table class="hist-table" id="vs-detail-table"></table>
+      </div>
+
+      <div class="flex-row g10" style="justify-content:center">
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('m-vs-result');resetGame()">🏠 Menu Utama</button>
+        <button class="btn btn-orange btn-sm" onclick="closeModal('m-vs-result');startVersusRematch()">🔁 Tanding Ulang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       MODAL: RIWAYAT SESI
+  ====================================================== -->
+  <div class="modal-bg" id="m-history">
+    <div class="modal-card anim-bounce" style="max-width:760px">
+      <button class="modal-close" onclick="closeModal('m-history')">✕</button>
+      <div class="flex-col ic g8">
+        <div style="font-size:34px">📚</div>
+        <div class="t-sub c-a glow-a">Riwayat Sesi</div>
+        <div class="t-sm c-m tc">Data tersimpan di Local Storage browser ini. Maksimum 50 sesi terakhir.</div>
+      </div>
+      <div id="hist-content" style="overflow-x:auto;max-height:380px;overflow-y:auto"></div>
+      <div class="flex-row g8" style="justify-content:center;flex-wrap:wrap;margin-top:8px">
+        <button class="btn btn-ghost btn-sm" onclick="clearHistory()">🗑️ Hapus Riwayat</button>
+        <button class="btn btn-primary btn-sm" onclick="exportHistoryCSV()">📥 Unduh Semua (CSV)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       MODAL: VERSUS MODE — pilih nama 2 pemain
+  ====================================================== -->
+  <div class="modal-bg" id="m-versus">
+    <div class="modal-card anim-bounce" style="max-width:560px">
+      <button class="modal-close" onclick="closeModal('m-versus')">✕</button>
+      <div class="flex-col ic g12">
+        <div style="font-size:40px">⚔️</div>
+        <div class="t-sub c-a glow-a">VERSUS MODE</div>
+        <div class="pill pill-y">2 PEMAIN · BERGANTIAN</div>
+        <div class="t-sm c-m tc" style="max-width:420px;line-height:1.55">
+          Dua pemain bertanding! Setiap pemain melakukan SEMUA gerakan secara bergantian, lalu skornya dibandingkan untuk menentukan pemenang.
+        </div>
+      </div>
+      <div class="flex-col g14 w100 mt12">
+        <div class="card flex-col g8">
+          <div class="t-xs" style="color:var(--accent);text-transform:uppercase;letter-spacing:1px;font-weight:800">🔵 PEMAIN 1</div>
+          <input id="inp-vs-p1" class="field" type="text" maxlength="20" placeholder="Nama Pemain 1…" autocomplete="off"/>
+        </div>
+        <div style="text-align:center;font-size:24px;color:var(--muted);font-weight:900">⚔</div>
+        <div class="card flex-col g8" style="border-color:rgba(255,138,61,.3)">
+          <div class="t-xs" style="color:var(--orange);text-transform:uppercase;letter-spacing:1px;font-weight:800">🟠 PEMAIN 2</div>
+          <input id="inp-vs-p2" class="field" type="text" maxlength="20" placeholder="Nama Pemain 2…" autocomplete="off"/>
+        </div>
+        <div class="flex-col ic g10">
+          <div class="t-xs c-m" style="text-transform:uppercase;letter-spacing:1px">Durasi per Gerakan</div>
+          <div class="dur-pills">
+            <div class="dur-p on" data-d="30" onclick="pickDur(this)">30 dtk</div>
+            <div class="dur-p"    data-d="45" onclick="pickDur(this)">45 dtk</div>
+            <div class="dur-p"    data-d="60" onclick="pickDur(this)">60 dtk</div>
+          </div>
+        </div>
+      </div>
+      <div class="flex-row g10" style="justify-content:center;margin-top:14px">
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('m-versus')">Batal</button>
+        <button class="btn btn-orange btn-md" onclick="startVersus()">⚔️ MULAI BERTANDING</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       MODAL: TURN ANNOUNCER — info giliran pemain
+  ====================================================== -->
+  <div class="modal-bg" id="m-turn">
+    <div class="modal-card anim-bounce" style="max-width:480px;text-align:center">
+      <div class="flex-col ic g12">
+        <div style="font-size:50px" id="turn-icon">🔵</div>
+        <div class="t-sub c-a">GILIRAN PEMAIN <span id="turn-num">1</span></div>
+        <div class="t-hero c-t" id="turn-name" style="font-size:28px">—</div>
+        <div class="t-body c-m tc" style="max-width:380px;line-height:1.6">
+          Siap-siap, <strong id="turn-name-2" class="c-a">—</strong>!<br>
+          Selesaikan semua gerakan untuk mencatat skormu.
+        </div>
+        <div class="card flex-col g6 w100" style="background:rgba(0,217,255,.05)">
+          <div class="t-xs c-m" style="text-transform:uppercase;letter-spacing:1px">Skor Pemain Lawan</div>
+          <div class="t-title c-y" id="turn-rival-score">0</div>
+          <div class="t-xs c-m" id="turn-rival-name">—</div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="continueTurn()">▶ MULAI GILIRAN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- (signature & debug panel: hidden from frontend — see __SIGNATURE__ in JS) -->
+
+  <!-- ======================================================
+       MODAL: TUJUAN BELAJAR
+  ====================================================== -->
+  <div class="modal-bg" id="m-tujuan">
+    <div class="modal-card anim-bounce">
+      <button class="modal-close" onclick="closeModal('m-tujuan')">✕</button>
+      <div class="flex-col ic g16">
+        <div style="font-size:40px">🎯</div>
+        <div class="t-sub c-a glow-a">Tujuan Pembelajaran</div>
+        <div class="pill pill-g">PJOK · KELAS 6 SD</div>
+      </div>
+      <div class="card flex-col g12 mt12 w100">
+        <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">📚 Materi Pokok</div>
+        <div class="t-body c-t">Kebugaran Jasmani</div>
+      </div>
+      <div class="card flex-col g12 w100">
+        <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">✨ Tujuan Pembelajaran</div>
+        <div class="t-body c-t">Siswa mampu <em class="c-a" style="font-style:normal">menjelaskan pengaruh aktivitas jasmani yang teratur terhadap kesehatan</em> melalui praktik gerakan kebugaran (Jumping Jack, Squat, dan Lari di Tempat) yang dipantau secara real-time menggunakan teknologi pose detection.</div>
+      </div>
+      <div class="card flex-col g12 w100">
+        <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">🏆 Capaian Yang Diharapkan</div>
+        <ul class="blist">
+          <li>Memahami pentingnya aktivitas jasmani teratur bagi kesehatan tubuh</li>
+          <li>Mampu mempraktikkan 3 gerakan dasar kebugaran dengan teknik yang benar</li>
+          <li>Mengenali fase awal dan akhir setiap gerakan</li>
+          <li>Membangun kebiasaan aktif dan disiplin dalam berolahraga</li>
+          <li>Meningkatkan kesadaran terhadap koordinasi tubuh dan postur</li>
+        </ul>
+      </div>
+      <div class="card flex-col g12 w100">
+        <div class="t-xs c-a" style="text-transform:uppercase;letter-spacing:1px;font-weight:800">💡 Cara Bermain</div>
+        <ol class="step-list" style="counter-reset:olc">
+          <li class="step-row"><div class="step-n">1</div><div class="step-t">Masukkan namamu dan pilih durasi tiap gerakan</div></li>
+          <li class="step-row"><div class="step-n">2</div><div class="step-t">Pilih salah satu dari 3 gerakan yang tersedia</div></li>
+          <li class="step-row"><div class="step-n">3</div><div class="step-t">Tunjukkan kedua fase gerakan (awal & akhir) ke kamera</div></li>
+          <li class="step-row"><div class="step-n">4</div><div class="step-t">Setelah countdown, lakukan gerakan sebanyak-banyaknya</div></li>
+          <li class="step-row"><div class="step-n">5</div><div class="step-t">Selesaikan semua 3 gerakan untuk lihat hasil akhir</div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+       MODAL: INFORMASI PENGEMBANG
+  ====================================================== -->
+  <div class="modal-bg" id="m-dev">
+    <div class="modal-card anim-bounce" style="max-width:380px;padding:18px 20px;gap:10px">
+      <button class="modal-close" onclick="closeModal('m-dev')">✕</button>
+      <div class="flex-col ic" style="gap:6px">
+        <div class="dev-photo" id="dev-photo-wrap" style="width:80px;height:80px;border-width:2px">
+          <div class="dev-avatar-fallback" style="font-size:32px">👨‍🏫</div>
+        </div>
+        <div class="pill pill-a" style="font-size:9px;padding:2px 8px">PENGEMBANG</div>
+        <div style="text-align:center;line-height:1.15;font-size:15px;font-weight:800;color:var(--text)">Oryza Sativa N.</div>
+        <div style="text-align:center;font-size:11px;color:var(--accent);font-weight:600">Gurumasakini</div>
+        <div style="text-align:center;max-width:300px;line-height:1.45;font-size:10.5px;color:var(--text-dim)">
+          Guru &amp; Akademisi · Magister Pendidikan Olahraga<br>
+          Inovasi pembelajaran <em class="c-a" style="font-style:normal">Physical Education</em> berbasis teknologi
+        </div>
+      </div>
+      <div class="card flex-col" style="padding:10px 12px;gap:5px">
+        <div style="font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;font-weight:800">📖 Tentang Aplikasi</div>
+        <div style="font-size:10.5px;line-height:1.45;color:var(--text)">
+          Aplikasi pembelajaran interaktif berbasis AI Pose Detection (MediaPipe) untuk siswa Kelas 6 SD — memadukan teori kesehatan dengan praktik gerakan nyata yang dipantau real-time oleh kamera.
+        </div>
+      </div>
+      <div class="card flex-col" style="padding:9px 12px;gap:5px">
+        <div style="font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;font-weight:800">🛠️ Teknologi</div>
+        <div class="flex-row g6" style="flex-wrap:wrap">
+          <span class="pill pill-g" style="font-size:8.5px;padding:2px 7px">HTML5 + Vanilla JS</span>
+          <span class="pill pill-g" style="font-size:8.5px;padding:2px 7px">MediaPipe Pose</span>
+          <span class="pill pill-g" style="font-size:8.5px;padding:2px 7px">WebRTC</span>
+          <span class="pill pill-g" style="font-size:8.5px;padding:2px 7px">SVG + Canvas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+'use strict';
+
+/* ============================================================
+   ╔════════════════════════════════════════════════════════╗
+   ║  SHADOW SIGNATURE — DO NOT REMOVE                      ║
+   ║                                                        ║
+   ║  Developer  : Oryza Sativa N. (Gurumasakini)           ║
+   ║  Role       : Guru & Akademisi PJOK                    ║
+   ║  Education  : Magister Pendidikan Olahraga             ║
+   ║  Project    : Gim Kebugaran Jasmani — PJOK Kelas 6 SD  ║
+   ║  Year       : 2025                                     ║
+   ║  Tech Stack : HTML5 + Vanilla JS + MediaPipe Pose      ║
+   ║                                                        ║
+   ║  Karya inovasi pembelajaran berbasis AI                ║
+   ║  pose detection untuk Physical Education.              ║
+   ╚════════════════════════════════════════════════════════╝
+============================================================ */
+
+/* ====================================================
+   🔒 HIDDEN AUTHORSHIP MARKERS (anti-copy-paste)
+   Jika ada yang menghapus signature ini, aplikasi
+   akan berperilaku aneh / rusak secara halus.
+==================================================== */
+const _0x4f6e = ['T3J5emE=','U2F0aXZh','TmFnYXJh','R3VydW1hc2FraW5p','MjAyNQ==','UEpPS19LNg=='];
+const _0x8a2c = _0x4f6e.map(s=>atob(s)).join('|');
+/* Decoded: Oryza|Sativa|Nagara|Gurumasakini|2025|PJOK_K6 */
+
+/* TRAP 1: Variable yang dipakai di banyak tempat, jika dihapus → app crash */
+const __INTEGRITY = (()=>{
+  const seed = _0x8a2c.split('|');
+  return {
+    p: seed[0], q: seed[1], r: seed[2], 
+    s: seed[3], y: seed[4], k: seed[5],
+    check(){ return this.p.length + this.q.length + this.s.length === 23; }
+  };
+})();
+
+/* TRAP 2: Function name terlihat normal tapi mengandung verifikasi */
+function _initSystem(){
+  /* Jika __INTEGRITY dihapus / dimodifikasi, function ini akan throw */
+  if(!__INTEGRITY || !__INTEGRITY.check()){
+    /* Diam-diam slow down semua interaksi */
+    window.__corrupt = true;
+    setInterval(()=>{ document.body.style.filter = 'hue-rotate('+(Math.random()*360)+'deg)'; }, 50);
+    return false;
+  }
+  return true;
+}
+
+/* TRAP 3: Disguised as console formatter — sebenarnya verifier */
+const _logFmt = (text)=>{
+  if(typeof __INTEGRITY === 'undefined') return '';
+  return text + ' /* © ' + __INTEGRITY.p + ' ' + __INTEGRITY.q + ' ' + __INTEGRITY.r + ' */';
+};
+
+/* TRAP 4: DOM observer yang reinject signature ke <meta> jika dihapus */
+const _restoreSignature = ()=>{
+  try{
+    const sigMeta = document.querySelector('meta[name="signature"]');
+    const expectedSig = 'ORYZA-SATIVA-N-GURUMASAKINI-2025';
+    if(!sigMeta){
+      const m = document.createElement('meta');
+      m.name = 'signature';
+      m.content = expectedSig;
+      document.head.appendChild(m);
+    } else if(sigMeta.content !== expectedSig){
+      sigMeta.content = expectedSig;
+    }
+    /* Reinject author meta */
+    const authorMeta = document.querySelector('meta[name="author"]');
+    if(!authorMeta || !authorMeta.content.includes('Oryza Sativa')){
+      const m = document.createElement('meta');
+      m.name = 'author';
+      m.content = 'Oryza Sativa N. (Gurumasakini)';
+      document.head.appendChild(m);
+    }
+  }catch(e){}
+};
+/* Cek tiap 30 detik */
+setInterval(_restoreSignature, 30000);
+
+/* TRAP 5: Hidden document title watermark */
+const _origTitle = document.title;
+setInterval(()=>{
+  if(document.title !== _origTitle && !document.title.includes('Oryza')){
+    document.title = _origTitle;
+  }
+}, 5000);
+
+const __SIGNATURE__ = Object.freeze({
+  developer: 'Oryza Sativa N.',
+  alias: 'Gurumasakini',
+  role: 'Guru & Akademisi PJOK',
+  education: 'Magister Pendidikan Olahraga',
+  project: 'Gim Kebugaran Jasmani',
+  audience: 'PJOK Kelas 6 SD',
+  year: 2025,
+  hash: 'ORYZA-SATIVA-N-GURUMASAKINI-2025-PJOK-K6',
+  build: 'v2.0.0-pose-detection-premium',
+  /* Cryptographic-style fingerprint untuk verifikasi keaslian */
+  fingerprint: (typeof btoa !== 'undefined') ?
+    btoa('OryzaSativaN.Gurumasakini.2025.GimKebugaranJasmani').split('').reverse().join('') : ''
+});
+
+/* Expose ke window agar bisa diverifikasi: window.__signature() */
+window.__signature = () => {
+  if(!_initSystem()) return null;
+  console.log('%c╔════════════════════════════════════════════╗',
+    'color:#00d9ff;font-weight:bold;font-family:monospace');
+  console.log('%c║  © Oryza Sativa N. (Gurumasakini) — 2025  ║',
+    'color:#00d9ff;font-weight:bold;font-family:monospace');
+  console.log('%c╚════════════════════════════════════════════╝',
+    'color:#00d9ff;font-weight:bold;font-family:monospace');
+  console.table(__SIGNATURE__);
+  return __SIGNATURE__;
+};
+
+/* Jalankan init di awal */
+_initSystem();
+
+/* Auto-print banner saat aplikasi load */
+console.log(
+  '%c🏆 GIM KEBUGARAN JASMANI %c\n' +
+  '%cKarya: %cOryza Sativa N. (Gurumasakini)%c\n' +
+  '%cPJOK Kelas 6 SD · Magister Pendidikan Olahraga · 2025\n' +
+  'Ketik %cwindow.__signature()%c untuk detail.',
+  'background:linear-gradient(90deg,#00d9ff,#3b82f6);color:#fff;font-size:16px;font-weight:bold;padding:6px 14px;border-radius:4px',
+  '',
+  'color:#888;font-size:12px', 'color:#00d9ff;font-weight:bold;font-size:13px', 'color:#888;font-size:12px',
+  'color:#aaa;font-size:11px', 'color:#fdd835;font-weight:bold;background:#222;padding:2px 6px;border-radius:3px', 'color:#aaa;font-size:11px'
+);
+/* ============================================================
+   SCALE 16:9
+============================================================ */
+function scale(){
+  const s=Math.min(innerWidth/1280,innerHeight/720);
+  const app=document.getElementById('app');
+  app.style.transform=`scale(${s})`;
+  app.style.left=(innerWidth-1280*s)/2+'px';
+  app.style.top=(innerHeight-720*s)/2+'px';
+}
+addEventListener('resize',scale); scale();
+
+/* ============================================================
+   ASSET LOADER — Optional external assets from ./assets/
+   ----------------------------------------------------------
+   File yang akan dicari (opsional — fallback jika tidak ada):
+
+   AUDIO (.mp3 / .wav / .ogg, dicoba .mp3 dulu):
+     sfx_correct.mp3    saat 1 rep berhasil
+     sfx_wrong.mp3      saat pose salah
+     sfx_click.mp3      klik tombol
+     sfx_tick.mp3       tick timer
+     sfx_complete.mp3   sesi selesai
+     sfx_timeout.mp3    waktu habis
+     sfx_ready.mp3      sikap sempurna terkonfirmasi
+     music_home.mp3     musik HOME / SETUP / PILIH GERAKAN
+     music_game.mp3     musik saat PERMAINAN BERJALAN
+
+   GAMBAR (.png / .jpg / .svg, .png dulu):
+     icon_jj.png        icon Jumping Jack
+     icon_squat.png     icon Squat
+     icon_run.png       icon Lari di Tempat
+     logo.png           logo intro screen
+     bg_intro.jpg       background intro
+     pengembang.png     foto developer (Oryza Sativa N)
+
+   MEDIAPIPE LOCAL (opsional — jika ingin offline 100%):
+     Download file berikut ke folder ./assets/mediapipe/:
+       - pose.js
+       - pose_solution_packed_assets.data
+       - pose_solution_packed_assets_loader.js
+       - pose_solution_simd_wasm_bin.js
+       - pose_solution_simd_wasm_bin.wasm
+       - pose_landmark_full.tflite
+
+     Sumber download:
+     https://cdn.jsdelivr.net/npm/@mediapipe/pose/[nama_file]
+
+     Jika folder ./assets/mediapipe/ terdeteksi, aplikasi akan
+     menggunakan model LOKAL (offline penuh).
+============================================================ */
+const ASSET_BASE = './assets/';
+const AUDIO_BUFFERS = {}; /* key → HTMLAudioElement (atau null jika tidak ada) */
+const IMG_AVAIL = {};     /* key → URL string (atau null) */
+const ASSET_STATUS = {};  /* key → {found, url, err} untuk debug panel */
+
+/* Coba load satu audio file. Ekstensi dicoba berurutan: mp3, wav, ogg, m4a.
+   Memakai 'loadedmetadata' (lebih cepat dari 'canplaythrough' yang butuh
+   buffer penuh — bisa gagal di file://). */
+function tryLoadAudio(key, exts=['mp3','wav','ogg','m4a','MP3','WAV']){
+  return new Promise(resolve=>{
+    let i=0;
+    const tryNext=()=>{
+      if(i>=exts.length){
+        ASSET_STATUS['audio:'+key] = {found:false, url:null, err:'tidak ditemukan / format tidak didukung'};
+        resolve(null); return;
+      }
+      const ext = exts[i++];
+      const url = ASSET_BASE + key + '.' + ext;
+      const a = new Audio();
+      a.preload='auto';
+      let done=false;
+      const finish=(ok,err)=>{
+        if(done)return; done=true;
+        a.removeEventListener('loadedmetadata',onOk);
+        a.removeEventListener('canplay',onOk);
+        a.removeEventListener('error',onErr);
+        if(ok){
+          ASSET_STATUS['audio:'+key] = {found:true, url:url, err:null};
+          resolve(a);
+        } else {
+          tryNext();
+        }
+      };
+      const onOk = ()=>finish(true);
+      const onErr= ()=>finish(false,'load error');
+      /* 'loadedmetadata' = audio header parsed (cukup untuk play),
+         'canplay' = browser yakin bisa diputar tanpa stall */
+      a.addEventListener('loadedmetadata',onOk,{once:true});
+      a.addEventListener('canplay',onOk,{once:true});
+      a.addEventListener('error',onErr,{once:true});
+      try{ a.src = url; a.load(); }catch(e){ finish(false,'src set error'); return; }
+      /* timeout DINAIKKAN ke 4 detik per ekstensi (file audio bisa besar) */
+      setTimeout(()=>{ if(!done) finish(false,'timeout 4s'); }, 4000);
+    };
+    tryNext();
+  });
+}
+
+/* Coba load image — return URL jika ada, null jika tidak */
+function tryLoadImage(key, exts=['png','jpg','jpeg','svg','webp','PNG','JPG']){
+  return new Promise(resolve=>{
+    let i=0;
+    const tryNext=()=>{
+      if(i>=exts.length){
+        ASSET_STATUS['img:'+key] = {found:false, url:null, err:'tidak ditemukan'};
+        resolve(null); return;
+      }
+      const ext = exts[i++];
+      const url = ASSET_BASE + key + '.' + ext;
+      const img = new Image();
+      let done=false;
+      img.onload =()=>{
+        if(done)return; done=true;
+        ASSET_STATUS['img:'+key] = {found:true, url:url, err:null};
+        resolve(url);
+      };
+      img.onerror=()=>{
+        if(done)return; done=true;
+        tryNext();
+      };
+      img.src = url;
+      setTimeout(()=>{ if(!done){ done=true; tryNext(); } }, 3000);
+    };
+    tryNext();
+  });
+}
+
+/* Preload semua aset opsional secara paralel */
+async function preloadAssets(){
+  const audioKeys = ['sfx_correct','sfx_wrong','sfx_click','sfx_tick',
+                     'sfx_complete','sfx_timeout','sfx_ready',
+                     'music_home',  // musik intro/setup/pilih gerakan
+                     'music_game']; // musik saat permainan berjalan
+  const imgKeys   = ['icon_jj','icon_squat','icon_run',
+                     'logo','bg_intro','pengembang'];
+
+  /* status awal */
+  audioKeys.forEach(k=> ASSET_STATUS['audio:'+k] = {found:false, url:null, err:'loading…'});
+  imgKeys.forEach(k=>   ASSET_STATUS['img:'+k]   = {found:false, url:null, err:'loading…'});
+
+  await Promise.all([
+    ...audioKeys.map(k => tryLoadAudio(k).then(a=>{ AUDIO_BUFFERS[k] = a; updateAssetPanel(); })),
+    ...imgKeys.map(k => tryLoadImage(k).then(u=>{ IMG_AVAIL[k] = u; updateAssetPanel(); }))
+  ]);
+
+  /* Log lengkap ke console */
+  console.group('[Asset Loader] HASIL PEMUATAN ASET');
+  console.log('Path dicari: ' + ASSET_BASE + ' (relatif dari index.html)');
+  console.log('Untuk debug, buka panel "🎨 Aset" di pojok kanan bawah halaman.');
+  console.table(Object.entries(ASSET_STATUS).map(([k,v])=>({
+    aset:k, status:v.found?'✓ DITEMUKAN':'✗ TIDAK ADA', url:v.url||'-', keterangan:v.err||''
+  })));
+  console.groupEnd();
+
+  applyAssetImages();
+  updateAssetPanel();
+}
+
+function applyAssetImages(){
+  if(IMG_AVAIL.logo){
+    const fig = document.querySelector('.intro-bg-fig');
+    if(fig){
+      fig.innerHTML = `<img src="${IMG_AVAIL.logo}" alt="Logo">`;
+      fig.style.opacity = '0.55';
+    }
+  }
+  if(IMG_AVAIL.bg_intro){
+    const intro = document.getElementById('s-intro');
+    if(intro){
+      intro.style.background =
+        `linear-gradient(rgba(7,17,31,.82),rgba(7,17,31,.88)),url("${IMG_AVAIL.bg_intro}") center/cover no-repeat`;
+    }
+  }
+  /* Foto pengembang */
+  if(IMG_AVAIL.pengembang){
+    const wrap = document.getElementById('dev-photo-wrap');
+    if(wrap){
+      wrap.innerHTML = `<img src="${IMG_AVAIL.pengembang}" alt="Oryza Sativa N">`;
+    }
+  }
+  /* Re-render movement grid jika sudah ada di DOM */
+  const grid = document.getElementById('mov-grid');
+  if(grid && grid.children.length>0) renderMoveGrid();
+}
+
+/* (Asset debug panel dihapus dari frontend — call no-op) */
+function updateAssetPanel(){ /* hidden */ }
+function toggleAssetPanel(){ /* hidden */ }
+
+/* ============================================================
+   MODAL SYSTEM
+============================================================ */
+function openModal(id){
+  sfx.click();
+  /* unlock audio context */
+  au();
+  /* Mainkan musik home jika belum jalan (modal pertama interaksi) */
+  if(!currentBgKey) playHomeMusic();
+  document.getElementById(id).classList.add('show');
+}
+function closeModal(id){
+  sfx.click();
+  document.getElementById(id).classList.remove('show');
+}
+/* Close modal saat klik backdrop */
+document.addEventListener('click', e=>{
+  if(e.target.classList && e.target.classList.contains('modal-bg')){
+    e.target.classList.remove('show');
+  }
+});
+/* ESC untuk close modal */
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape'){
+    document.querySelectorAll('.modal-bg.show').forEach(m=>m.classList.remove('show'));
+  }
+});
+
+/* Helper: dapatkan icon untuk gerakan — pakai gambar jika ada, fallback emoji */
+function getMoveIcon(moveId){
+  const mapKey = {
+    'jj':'jj', 'sq':'squat', 'run':'run'
+  };
+  const key = 'icon_' + (mapKey[moveId] || moveId);
+  if(IMG_AVAIL[key]){
+    return `<img src="${IMG_AVAIL[key]}" style="width:48px;height:48px;object-fit:contain" alt="">`;
+  }
+  /* fallback emoji dari config */
+  const m = MOVES.find(x=>x.id===moveId);
+  return m ? m.icon : '⭐';
+}
+
+/* ============================================================
+   AUDIO (Web Audio API + Asset Override)
+============================================================ */
+let actx=null;
+function au(){if(!actx)try{actx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+function tone(f,type,dur,vol=.22,d=0){
+  au();if(!actx)return;
+  try{
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.connect(g);g.connect(actx.destination);
+    o.type=type;o.frequency.setValueAtTime(f,actx.currentTime+d);
+    g.gain.setValueAtTime(vol,actx.currentTime+d);
+    g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d+dur);
+    o.start(actx.currentTime+d);o.stop(actx.currentTime+d+dur);
+  }catch(e){}
+}
+
+/* Helper: play audio file jika ada, atau fallback ke synth function */
+function playOrFallback(audioKey, fallbackFn){
+  const audio = AUDIO_BUFFERS[audioKey];
+  if(audio){
+    try{
+      /* clone untuk memungkinkan rapid replay */
+      const a = audio.cloneNode();
+      a.volume = 0.7;
+      a.play().catch(()=>fallbackFn());
+    }catch(e){ fallbackFn(); }
+  } else {
+    fallbackFn();
+  }
+}
+
+const sfx={
+  correct: ()=>playOrFallback('sfx_correct', ()=>{tone(523,'sine',.10,.28);tone(659,'sine',.10,.25,.12);tone(784,'sine',.15,.28,.24)}),
+  wrong:   ()=>playOrFallback('sfx_wrong',   ()=>{tone(220,'sawtooth',.24,.18);tone(175,'sawtooth',.24,.15,.12)}),
+  rep:     ()=>playOrFallback('sfx_correct', ()=>{tone(880,'sine',.07,.2);tone(1047,'sine',.09,.18,.07)}),
+  complete:()=>playOrFallback('sfx_complete',()=>[523,659,784,1047].forEach((f,i)=>tone(f,'sine',.2,.26,i*.11))),
+  click:   ()=>playOrFallback('sfx_click',   ()=>tone(880,'sine',.05,.12)),
+  tick:    ()=>playOrFallback('sfx_tick',    ()=>tone(1200,'square',.04,.08)),
+  timeout: ()=>playOrFallback('sfx_timeout', ()=>{tone(330,'sawtooth',.38,.2);tone(275,'sawtooth',.38,.16,.18)}),
+  ready:   ()=>playOrFallback('sfx_ready',   ()=>{tone(659,'sine',.1,.3);tone(880,'sine',.15,.3,.12)})
+};
+
+/* === DUAL BACKGROUND MUSIC SYSTEM ===
+   - music_home: dari intro → setup → pilih gerakan (looping, smooth)
+   - music_game: saat permainan berjalan (looping, lebih energik)
+   Saat transisi, musik yang sedang main akan di-stop, dan yang baru play. */
+let currentBgKey = null;
+
+function playMusic(key){
+  /* Jika sudah memainkan key yang sama, jangan restart */
+  if(currentBgKey === key){
+    const cur = AUDIO_BUFFERS[key];
+    if(cur && cur.paused){
+      try{ cur.play().catch(()=>{}); }catch(e){}
+    }
+    return;
+  }
+  /* Stop musik lama */
+  if(currentBgKey){
+    const old = AUDIO_BUFFERS[currentBgKey];
+    if(old){
+      try{ old.pause(); old.currentTime = 0; }catch(e){}
+    }
+  }
+  currentBgKey = key;
+  /* Play musik baru */
+  const m = AUDIO_BUFFERS[key];
+  if(!m) return;
+  m.loop = true;
+  m.volume = (key === 'music_game') ? 0.30 : 0.22;
+  try{ m.currentTime = 0; }catch(e){}
+  m.play().catch(()=>{});
+}
+
+function playHomeMusic(){ playMusic('music_home'); }
+function playGameMusic(){ playMusic('music_game'); }
+
+function stopAllMusic(){
+  ['music_home','music_game'].forEach(k=>{
+    const m = AUDIO_BUFFERS[k];
+    if(m){ try{ m.pause(); m.currentTime = 0; }catch(e){} }
+  });
+  currentBgKey = null;
+}
+
+/* Backward-compat wrapper (sebelumnya playBgMusic / stopBgMusic) */
+function playBgMusic(){ playGameMusic(); }
+function stopBgMusic(){
+  const m = AUDIO_BUFFERS.music_game;
+  if(m){ try{ m.pause(); m.currentTime = 0; }catch(e){} }
+  if(currentBgKey === 'music_game') currentBgKey = null;
+}
+
+/* ============================================================
+   CONFETTI
+============================================================ */
+const cfCv=document.getElementById('confetti-canvas');
+const cfCx=cfCv.getContext('2d');
+let cfParts=[],cfRun=false;
+function launchConfetti(n=120){
+  cfCv.width=1280;cfCv.height=720;
+  const cols=['#00e5ff','#00e676','#fdd835','#ff6d00','#ff1744','#ce93d8'];
+  cfParts=Array.from({length:n},()=>({
+    x:Math.random()*1280,y:Math.random()*-200,
+    w:6+Math.random()*10,h:12+Math.random()*14,
+    rot:Math.random()*360,rv:(Math.random()-.5)*6,
+    vx:(Math.random()-.5)*3,vy:3+Math.random()*5,
+    col:cols[Math.floor(Math.random()*cols.length)],alpha:1
+  }));
+  cfRun=true;animCf();
+}
+function animCf(){
+  if(!cfRun){cfCx.clearRect(0,0,1280,720);return}
+  cfCx.clearRect(0,0,1280,720);let a=0;
+  cfParts.forEach(p=>{
+    p.y+=p.vy;p.x+=p.vx;p.rot+=p.rv;
+    if(p.y>650)p.alpha-=.04;
+    if(p.alpha>0){a++;cfCx.save();cfCx.globalAlpha=Math.max(0,p.alpha);
+    cfCx.translate(p.x,p.y);cfCx.rotate(p.rot*Math.PI/180);
+    cfCx.fillStyle=p.col;cfCx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cfCx.restore()}
+  });
+  if(a>0)requestAnimationFrame(animCf);
+  else{cfRun=false;cfCx.clearRect(0,0,1280,720)}
+}
+
+/* ============================================================
+   TRANSITION
+============================================================ */
+const ov=document.getElementById('overlay');
+function go(from,to,fn){
+  sfx.click();
+  ov.classList.add('in');
+  setTimeout(()=>{
+    if(fn)fn();
+    document.getElementById(from).classList.remove('active');
+    document.getElementById(to).classList.add('active');
+    ov.classList.remove('in');
+  },260);
+}
+
+/* ============================================================
+   MEDIAPIPE LANDMARK INDICES
+============================================================ */
+const LM={
+  NOSE:0,
+  L_SHOULDER:11,R_SHOULDER:12,
+  L_ELBOW:13,  R_ELBOW:14,
+  L_WRIST:15,  R_WRIST:16,
+  L_HIP:23,    R_HIP:24,
+  L_KNEE:25,   R_KNEE:26,
+  L_ANKLE:27,  R_ANKLE:28
+};
+
+/* ambil landmark, null jika visibility kurang */
+function lm(lms,idx,minV=0.3){
+  const p=lms[idx];
+  if(!p||(p.visibility!==undefined&&p.visibility<minV))return null;
+  return p;
+}
+
+/* hitung sudut 3 titik (derajat) */
+function angle3(a,b,c){
+  const ab={x:a.x-b.x,y:a.y-b.y};
+  const cb={x:c.x-b.x,y:c.y-b.y};
+  const dot=ab.x*cb.x+ab.y*cb.y;
+  const mag=Math.sqrt((ab.x**2+ab.y**2)*(cb.x**2+cb.y**2));
+  if(mag===0)return 0;
+  return Math.acos(Math.min(1,Math.max(-1,dot/mag)))*180/Math.PI;
+}
+
+/* ============================================================
+   SKELETON DRAWING (pada canvas)
+============================================================ */
+const CONNECTIONS=[
+  [LM.L_SHOULDER,LM.R_SHOULDER],[LM.L_HIP,LM.R_HIP],
+  [LM.L_SHOULDER,LM.L_ELBOW],[LM.L_ELBOW,LM.L_WRIST],
+  [LM.R_SHOULDER,LM.R_ELBOW],[LM.R_ELBOW,LM.R_WRIST],
+  [LM.L_SHOULDER,LM.L_HIP],[LM.R_SHOULDER,LM.R_HIP],
+  [LM.L_HIP,LM.L_KNEE],[LM.L_KNEE,LM.L_ANKLE],
+  [LM.R_HIP,LM.R_KNEE],[LM.R_KNEE,LM.R_ANKLE],
+  [LM.NOSE,LM.L_SHOULDER],[LM.NOSE,LM.R_SHOULDER]
+];
+const JOINT_DOTS=[
+  LM.NOSE,LM.L_SHOULDER,LM.R_SHOULDER,
+  LM.L_ELBOW,LM.R_ELBOW,LM.L_WRIST,LM.R_WRIST,
+  LM.L_HIP,LM.R_HIP,LM.L_KNEE,LM.R_KNEE,
+  LM.L_ANKLE,LM.R_ANKLE
+];
+
+function drawSkeleton(lms,ctx,correct){
+  const lineCol = correct?'rgba(0,230,118,.9)':'rgba(0,229,255,.8)';
+  const dotCol  = correct?'rgba(0,230,118,.95)':'rgba(0,229,255,.95)';
+  ctx.save();
+  CONNECTIONS.forEach(([a,b])=>{
+    const pa=lms[a],pb=lms[b];
+    if(!pa||!pb||(pa.visibility<.3)||(pb.visibility<.3))return;
+    ctx.beginPath();
+    ctx.moveTo(pa.x*640,pa.y*480);
+    ctx.lineTo(pb.x*640,pb.y*480);
+    ctx.strokeStyle=lineCol;ctx.lineWidth=4;ctx.lineCap='round';
+    ctx.stroke();
+  });
+  JOINT_DOTS.forEach(i=>{
+    const p=lms[i];if(!p||p.visibility<.3)return;
+    ctx.beginPath();ctx.arc(p.x*640,p.y*480,7,0,Math.PI*2);
+    ctx.fillStyle=dotCol;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.45)';ctx.lineWidth=1.5;ctx.stroke();
+  });
+  ctx.restore();
+}
+
+/* ============================================================
+   ====================================================
+   POSE DETECTORS — SETIAP GERAKAN PUNYA 2 FASE
+   ====================================================
+
+   Return value dari detector:
+   {
+     phaseA: bool,   // apakah fase A (awal) terpenuhi?
+     phaseB: bool,   // apakah fase B (akhir) terpenuhi?
+     angles: {name:{val,target,ok}},
+     feedbackA: str, // petunjuk jika fase A belum tercapai
+     feedbackB: str, // petunjuk jika fase B belum tercapai
+   }
+   atau null jika landmark tidak terdeteksi
+============================================================ */
+
+/* -------------------------------------------------------
+   1. JUMPING JACK
+   Fase A (TUTUP): tangan di bawah bahu, kaki rapat
+   Fase B (BUKA) : tangan di atas kepala, kaki lebar
+------------------------------------------------------- */
+function detectJJ(lms){
+  const lSh=lm(lms,LM.L_SHOULDER), rSh=lm(lms,LM.R_SHOULDER);
+  const lWr=lm(lms,LM.L_WRIST),    rWr=lm(lms,LM.R_WRIST);
+  const lHip=lm(lms,LM.L_HIP),     rHip=lm(lms,LM.R_HIP);
+  const lAnk=lm(lms,LM.L_ANKLE),   rAnk=lm(lms,LM.R_ANKLE);
+
+  if(!lSh||!rSh||!lWr||!rWr||!lHip||!rHip) return null;
+
+  /* --- TANGAN --- */
+  // tangan di atas = wrist.y harus JAUH di atas bahu (0.18 = ~18% tinggi frame)
+  // MediaPipe Y=0 di atas, makin besar makin ke bawah
+  const lArmUp = lWr.y < lSh.y - 0.18;
+  const rArmUp = rWr.y < rSh.y - 0.18;
+  // tangan di bawah = wrist lebih rendah dari bahu (longgar — cukup di bawah bahu)
+  const lArmDown = lWr.y > lSh.y + 0.02;
+  const rArmDown = rWr.y > rSh.y + 0.02;
+
+  const armsUp   = lArmUp && rArmUp;
+  const armsDown = lArmDown && rArmDown;
+
+  /* Sudut lengan kiri/kanan (shoulder-hip sebagai referensi vertikal) */
+  const lArmAng = (lWr&&lSh&&lHip) ? angle3(lWr,lSh,lHip) : 90;
+  const rArmAng = (rWr&&rSh&&rHip) ? angle3(rWr,rSh,rHip) : 90;
+
+  /* --- KAKI --- */
+  let footSpread=0, hipWidth=0;
+  if(lAnk&&rAnk){ footSpread=Math.abs(lAnk.x-rAnk.x); }
+  hipWidth = Math.abs(lHip.x-rHip.x);
+
+  // BUKA: jarak ankle > 1.5× lebar pinggul
+  const feetOpen   = footSpread > hipWidth * 1.5;
+  // TUTUP: jarak ankle < 0.8× lebar pinggul
+  const feetClosed = footSpread < hipWidth * 0.9;
+
+  /* --- FASE A: TUTUP (posisi awal/istirahat) --- */
+  const phaseA = armsDown && feetClosed;
+
+  /* --- FASE B: BUKA (posisi loncat buka) --- */
+  const phaseB = armsUp && feetOpen;
+
+  /* feedback per fase */
+  let feedbackA='', feedbackB='';
+
+  if(!armsDown && !feetClosed)
+    feedbackA='Turunkan tangan ke samping tubuh dan rapatkan kaki!';
+  else if(!armsDown)
+    feedbackA='Turunkan tangan ke samping / bawah!';
+  else if(!feetClosed)
+    feedbackA='Rapatkan kedua kaki!';
+  else
+    feedbackA='✅ Posisi TUTUP sempurna!';
+
+  if(!armsUp && !feetOpen)
+    feedbackB='Angkat tangan LEBIH TINGGI melewati kepala dan buka kaki lebar!';
+  else if(!armsUp)
+    feedbackB='Angkat kedua tangan lebih tinggi — lewati kepala, sampai lurus ke atas!';
+  else if(!feetOpen)
+    feedbackB='Buka kaki lebih lebar dari pinggul!';
+  else
+    feedbackB='✅ Posisi BUKA sempurna!';
+
+  return {
+    phaseA, phaseB,
+    angles:{
+      'Tangan Kiri': {val:Math.round(lArmAng), target:'<60°(buka)|>120°(tutup)', ok:phaseA||phaseB},
+      'Tangan Kanan':{val:Math.round(rArmAng), target:'<60°(buka)|>120°(tutup)', ok:phaseA||phaseB},
+      'Kaki Terbuka':{val:Math.round(footSpread*100), target:'>1.5×pinggul', ok:feetOpen},
+      'Kaki Rapat':  {val:Math.round(feetClosed?1:0), target:'<0.9×pinggul', ok:feetClosed},
+    },
+    feedbackA, feedbackB
+  };
+}
+
+/* -------------------------------------------------------
+   2. SQUAT
+   Fase A (BERDIRI): lutut lurus, pinggul atas (knee > ~160°)
+   Fase B (JONGKOK): lutut ditekuk dalam (knee < ~100°), pinggul turun
+------------------------------------------------------- */
+/* Calibration data untuk squat — disimpan saat fase A pertama terdeteksi */
+const SQUAT_CAL = {
+  baselineHipY: null,     // posisi hip Y saat berdiri tegak
+  baselineShoulderY: null,// posisi bahu Y saat berdiri tegak
+  baselineKneeY: null,    // posisi knee Y saat berdiri tegak
+  baselineBodyH: null,    // tinggi tubuh (shoulder→ankle) saat berdiri
+  samples: [],            // window of recent berdiri samples untuk smoothing
+  initialized: false
+};
+
+function resetSquatCalibration(){
+  SQUAT_CAL.baselineHipY = null;
+  SQUAT_CAL.baselineShoulderY = null;
+  SQUAT_CAL.baselineKneeY = null;
+  SQUAT_CAL.baselineBodyH = null;
+  SQUAT_CAL.samples = [];
+  SQUAT_CAL.initialized = false;
+}
+
+function detectSquat(lms){
+  /* GUNAKAN visibility threshold LEBIH RENDAH (0.15) karena saat jongkok dalam,
+     lutut sering tertutup pinggul/badan oleh tubuh sendiri. */
+  const lHip=lm(lms,LM.L_HIP,0.15), rHip=lm(lms,LM.R_HIP,0.15);
+  const lKn =lm(lms,LM.L_KNEE,0.15),rKn =lm(lms,LM.R_KNEE,0.15);
+  const lAnk=lm(lms,LM.L_ANKLE,0.1),rAnk=lm(lms,LM.R_ANKLE,0.1);
+  const lSh =lm(lms,LM.L_SHOULDER,0.2),rSh=lm(lms,LM.R_SHOULDER,0.2);
+  const nose=lm(lms,LM.NOSE,0.2);
+
+  /* Minimal butuh: hip + shoulder (kepala/bahu HARUS terlihat untuk track tinggi) */
+  if((!lHip && !rHip) || (!lSh && !rSh)) return null;
+
+  /* === HITUNG POSISI RATA-RATA (Y axis: 0=atas, 1=bawah frame) === */
+  let hipY = 0, hipCount = 0;
+  if(lHip){ hipY += lHip.y; hipCount++; }
+  if(rHip){ hipY += rHip.y; hipCount++; }
+  hipY /= hipCount;
+
+  let shoulderY = 0, shCount = 0;
+  if(lSh){ shoulderY += lSh.y; shCount++; }
+  if(rSh){ shoulderY += rSh.y; shCount++; }
+  shoulderY /= shCount;
+
+  let kneeY = null;
+  if(lKn || rKn){
+    let kY = 0, kc = 0;
+    if(lKn){ kY += lKn.y; kc++; }
+    if(rKn){ kY += rKn.y; kc++; }
+    kneeY = kY / kc;
+  }
+
+  /* === HITUNG SUDUT LUTUT (jika ankle visible) === */
+  let kneeAngles = [];
+  if(lHip && lKn && lAnk) kneeAngles.push(angle3(lHip,lKn,lAnk));
+  if(rHip && rKn && rAnk) kneeAngles.push(angle3(rHip,rKn,rAnk));
+  const avgKnee = kneeAngles.length ? kneeAngles.reduce((a,b)=>a+b,0)/kneeAngles.length : 180;
+
+  /* === HITUNG SUDUT PUNGGUNG (shoulder-hip-knee) === */
+  let backAngles = [];
+  if(lSh && lHip && lKn) backAngles.push(angle3(lSh,lHip,lKn));
+  if(rSh && rHip && rKn) backAngles.push(angle3(rSh,rHip,rKn));
+  const avgBack = backAngles.length ? backAngles.reduce((a,b)=>a+b,0)/backAngles.length : 90;
+
+  /* === SINYAL 1: SUDUT LUTUT (multi-threshold karena distorsi kamera) === */
+  /* Threshold sangat permisif: <140° = JONGKOK (turun dari ~180°) */
+  const standByAngle = avgKnee > 150;
+  const squatByAngle = kneeAngles.length > 0 && avgKnee < 140;
+
+  /* === SINYAL 2: KEDEKATAN HIP ke KNEE ===
+     Saat berdiri: hip JAUH di atas knee (kneeY - hipY > ~0.20 absolut)
+     Saat jongkok dalam: hip dekat knee (kneeY - hipY < ~0.10) */
+  let hipKneeDist = null;
+  let standByHK = false, squatByHK = false;
+  if(kneeY !== null){
+    hipKneeDist = kneeY - hipY; /* positif = hip di atas knee */
+    standByHK = hipKneeDist > 0.18;
+    squatByHK = hipKneeDist < 0.10 && hipKneeDist > -0.05; /* termasuk hip sedikit di bawah knee */
+  }
+
+  /* === SINYAL 3: ADAPTIVE BASELINE — TURUN dari posisi berdiri ===
+     Saat berdiri tegak pertama kali, kita kalibrasi baseline.
+     Lalu jongkok = hip turun signifikan dari baseline. */
+
+  /* Tinggi tubuh (shoulder ke hip) sebagai PROXY skala — invariant terhadap jarak ke kamera */
+  const torsoLen = Math.abs(hipY - shoulderY);
+
+  /* Kalibrasi: kumpulkan sample baseline saat user benar-benar berdiri tegak */
+  const looksStanding = standByAngle || standByHK;
+  if(looksStanding && torsoLen > 0.08){
+    /* Tambahkan ke window sample (max 30 frame = ~1 detik) */
+    SQUAT_CAL.samples.push({hipY, shoulderY, kneeY: kneeY||0, torsoLen});
+    if(SQUAT_CAL.samples.length > 30) SQUAT_CAL.samples.shift();
+
+    /* Setelah min 8 sample stabil, hitung baseline (median lebih robust dari mean) */
+    if(SQUAT_CAL.samples.length >= 8){
+      const sortedHip = [...SQUAT_CAL.samples].sort((a,b)=>a.hipY-b.hipY);
+      SQUAT_CAL.baselineHipY      = sortedHip[Math.floor(sortedHip.length/2)].hipY;
+      SQUAT_CAL.baselineShoulderY = sortedHip[Math.floor(sortedHip.length/2)].shoulderY;
+      SQUAT_CAL.baselineKneeY     = sortedHip[Math.floor(sortedHip.length/2)].kneeY;
+      SQUAT_CAL.baselineBodyH     = sortedHip[Math.floor(sortedHip.length/2)].torsoLen;
+      SQUAT_CAL.initialized = true;
+    }
+  }
+
+  /* === SINYAL 3 EVAL: cek pergerakan TURUN dari baseline === */
+  let standByBaseline = false, squatByBaseline = false;
+  let hipDrop = 0, dropRatio = 0;
+  if(SQUAT_CAL.initialized){
+    /* hipDrop > 0 berarti hip TURUN dari baseline (Y bertambah) */
+    hipDrop = hipY - SQUAT_CAL.baselineHipY;
+    /* Normalisasi: rasio drop terhadap panjang torso baseline */
+    dropRatio = SQUAT_CAL.baselineBodyH > 0.05 ? hipDrop / SQUAT_CAL.baselineBodyH : 0;
+    /* Berdiri: hip dekat baseline */
+    standByBaseline = hipDrop < 0.05; /* toleransi sedikit */
+    /* Jongkok: hip turun >40% panjang torso dari baseline */
+    squatByBaseline = dropRatio > 0.40;
+  }
+
+  /* === KEPUTUSAN FASE FINAL — gabungkan semua sinyal (OR logic) ===
+     Setidaknya 1 sinyal positif = fase tercapai */
+  const phaseA = standByAngle || standByHK || standByBaseline;
+  const phaseB = squatByAngle || squatByHK || squatByBaseline;
+
+  /* === FEEDBACK === */
+  let feedbackA = '', feedbackB = '';
+  if(phaseA){
+    feedbackA = '✅ Posisi BERDIRI sempurna!';
+  } else {
+    feedbackA = 'Berdiri tegak menghadap kamera, luruskan lutut!';
+  }
+
+  if(phaseB){
+    feedbackB = '✅ Posisi JONGKOK sempurna!';
+  } else {
+    /* Berikan hint berdasarkan progress */
+    if(SQUAT_CAL.initialized && dropRatio > 0.25){
+      feedbackB = `Hampir! Turun ${Math.round(dropRatio*100)}% — lanjut sedikit lagi…`;
+    } else if(SQUAT_CAL.initialized && dropRatio > 0.10){
+      feedbackB = 'Tekuk lutut & turunkan pinggul lebih dalam!';
+    } else if(avgKnee < 160 && avgKnee > 140){
+      feedbackB = 'Hampir jongkok! Turun lebih dalam — pinggul mendekat ke lutut.';
+    } else {
+      feedbackB = 'Jongkok: tekuk lutut, turunkan pinggul sampai dekat lutut!';
+    }
+  }
+
+  /* === DISPLAY ANGLE CHIPS === */
+  const displayKnee = kneeAngles.length ? Math.round(avgKnee)+'°' : '—';
+  const displayDrop = SQUAT_CAL.initialized ? Math.round(dropRatio*100)+'%' : 'kalibrasi…';
+  const displayBack = Math.round(avgBack)+'°';
+
+  return {
+    phaseA, phaseB,
+    angles:{
+      'Sudut Lutut':   {val:displayKnee, target:'>150°(berdiri)|<140°(jongkok)', ok:phaseA||phaseB},
+      'Penurunan':     {val:displayDrop, target:'<5%(berdiri)|>40%(jongkok)',   ok:phaseA||phaseB},
+      'Punggung':      {val:displayBack, target:'>60° tegak', ok:avgBack>60},
+    },
+    feedbackA, feedbackB
+  };
+}
+
+/* -------------------------------------------------------
+   3. LARI DI TEMPAT
+   Fase A (KAKI KIRI ANGKAT) : knee kiri naik di atas pinggul
+   Fase B (KAKI KANAN ANGKAT): knee kanan naik di atas pinggul
+   Rep = A → B → A (atau B → A → B)
+------------------------------------------------------- */
+function detectRun(lms){
+  const lKn=lm(lms,LM.L_KNEE),   rKn=lm(lms,LM.R_KNEE);
+  const lHip=lm(lms,LM.L_HIP),   rHip=lm(lms,LM.R_HIP);
+  const lAnk=lm(lms,LM.L_ANKLE), rAnk=lm(lms,LM.R_ANKLE);
+  const lSh=lm(lms,LM.L_SHOULDER), rSh=lm(lms,LM.R_SHOULDER);
+  const lEl=lm(lms,LM.L_ELBOW),  rEl=lm(lms,LM.R_ELBOW);
+  const lWr=lm(lms,LM.L_WRIST),  rWr=lm(lms,LM.R_WRIST);
+
+  if(!lKn||!rKn||!lHip||!rHip) return null;
+
+  /* lutut terangkat: knee.y < hip.y - threshold */
+  const LIFT_THRESH = 0.05;
+  const lKneeUp = lKn.y < lHip.y - LIFT_THRESH;
+  const rKneeUp = rKn.y < rHip.y - LIFT_THRESH;
+
+  /* sudut lutut (hip-knee-ankle) saat diangkat */
+  const lKneeAng = (lHip&&lKn&&lAnk) ? angle3(lHip,lKn,lAnk) : 180;
+  const rKneeAng = (rHip&&rKn&&rAnk) ? angle3(rHip,rKn,rAnk) : 180;
+
+  /* ayunan siku */
+  const lArmAng = (lSh&&lEl&&lWr) ? angle3(lSh,lEl,lWr) : 180;
+  const rArmAng = (rSh&&rEl&&rWr) ? angle3(rSh,rEl,rWr) : 180;
+  const armsBent = lArmAng < 125 && rArmAng < 125;
+
+  /* Fase A = lutut KIRI terangkat */
+  const phaseA = lKneeUp;
+  /* Fase B = lutut KANAN terangkat */
+  const phaseB = rKneeUp;
+
+  let feedbackA='', feedbackB='';
+
+  if(!phaseA)
+    feedbackA='Angkat lutut KIRI lebih tinggi dari pinggul!';
+  else if(!armsBent)
+    feedbackA='✅ Lutut kiri terangkat! Tekuk siku & ayunkan lengan.';
+  else
+    feedbackA='✅ Lutut kiri naik + ayunan lengan bagus!';
+
+  if(!phaseB)
+    feedbackB='Angkat lutut KANAN lebih tinggi dari pinggul!';
+  else if(!armsBent)
+    feedbackB='✅ Lutut kanan terangkat! Tekuk siku & ayunkan lengan.';
+  else
+    feedbackB='✅ Lutut kanan naik + ayunan lengan bagus!';
+
+  return {
+    phaseA, phaseB,
+    angles:{
+      'Lutut Kiri':  {val:Math.round(lKneeAng), target:'angkat>hip', ok:lKneeUp},
+      'Lutut Kanan': {val:Math.round(rKneeAng), target:'angkat>hip', ok:rKneeUp},
+      'Siku Kiri':   {val:Math.round(lArmAng),  target:'<125°', ok:lArmAng<125},
+      'Siku Kanan':  {val:Math.round(rArmAng),  target:'<125°', ok:rArmAng<125},
+    },
+    feedbackA, feedbackB
+  };
+}
+
+
+/* -------------------------------------------------------
+   DETECT ATTENTION — Sikap Sempurna (Berdiri Siap)
+
+   Kriteria sikap sempurna:
+   1. Tubuh tegak: shoulder-hip-knee membentuk garis lurus (sudut > 160°)
+   2. Tangan lurus di samping: kedua wrist berada di sekitar pinggul
+   3. Kaki rapat-sedang: jarak ankle ≤ ~1.2× lebar pinggul
+   4. Lutut lurus: hip-knee-ankle > 160°
+   5. Seluruh tubuh terdeteksi (semua landmark kunci visible)
+
+   Return: {ready:bool, checks:[{name,ok}], msg:str}
+------------------------------------------------------- */
+function detectAttention(lms){
+  const lSh = lm(lms,LM.L_SHOULDER), rSh = lm(lms,LM.R_SHOULDER);
+  const lEl = lm(lms,LM.L_ELBOW),    rEl = lm(lms,LM.R_ELBOW);
+  const lWr = lm(lms,LM.L_WRIST),    rWr = lm(lms,LM.R_WRIST);
+  const lHip= lm(lms,LM.L_HIP),      rHip= lm(lms,LM.R_HIP);
+  const lKn = lm(lms,LM.L_KNEE),     rKn = lm(lms,LM.R_KNEE);
+  const lAnk= lm(lms,LM.L_ANKLE),    rAnk= lm(lms,LM.R_ANKLE);
+
+  /* 1. Seluruh tubuh terlihat */
+  const allVisible = lSh && rSh && lHip && rHip && lKn && rKn && lWr && rWr;
+  if(!allVisible){
+    return {ready:false, checks:[
+      {name:'Tubuh Terlihat', ok:false}
+    ], msg:'Mundur sedikit — seluruh tubuh harus terlihat kamera!'};
+  }
+
+  /* 2. Tubuh tegak (shoulder-hip-knee lurus) */
+  const lBodyAng = angle3(lSh, lHip, lKn);
+  const rBodyAng = angle3(rSh, rHip, rKn);
+  const bodyStraight = lBodyAng > 160 && rBodyAng > 160;
+
+  /* 3. Lutut lurus (berdiri tegak) */
+  const lKneeAng = lAnk ? angle3(lHip, lKn, lAnk) : 180;
+  const rKneeAng = rAnk ? angle3(rHip, rKn, rAnk) : 180;
+  const kneeStraight = lKneeAng > 160 && rKneeAng > 160;
+
+  /* 4. Tangan lurus di samping — wrist dekat pinggul (Y kurang lebih sejajar) */
+  /* wrist harus DI BAWAH bahu (tidak terangkat) */
+  const lArmDown = lWr.y > lSh.y + 0.10;
+  const rArmDown = rWr.y > rSh.y + 0.10;
+  /* dan wrist tidak terlalu jauh dari sumbu tubuh (X dekat hip) */
+  const hipMidX = (lHip.x + rHip.x) / 2;
+  const lArmClose = Math.abs(lWr.x - hipMidX) < 0.25;
+  const rArmClose = Math.abs(rWr.x - hipMidX) < 0.25;
+  const armsAtSide = lArmDown && rArmDown && lArmClose && rArmClose;
+
+  /* 5. Kaki tidak terlalu lebar (rapat-sedang) */
+  let feetOk = true;
+  if(lAnk && rAnk){
+    const footSpread = Math.abs(lAnk.x - rAnk.x);
+    const hipWidth = Math.abs(lHip.x - rHip.x);
+    feetOk = footSpread < hipWidth * 1.4; // toleran sedikit
+  }
+
+  /* 6. Pandangan ke depan (bahu menghadap kamera, jarak bahu cukup lebar) */
+  const shWidth = Math.abs(lSh.x - rSh.x);
+  const facingForward = shWidth > 0.12;
+
+  const ready = bodyStraight && kneeStraight && armsAtSide && feetOk && facingForward;
+
+  /* Determine the most important feedback message */
+  let msg = '';
+  if(!facingForward) msg = 'Hadapkan tubuh tegak ke kamera.';
+  else if(!bodyStraight) msg = 'Tegakkan tubuh — jangan membungkuk!';
+  else if(!kneeStraight) msg = 'Luruskan kedua lutut — berdiri tegak!';
+  else if(!armsAtSide) msg = 'Turunkan dan luruskan tangan di samping tubuh.';
+  else if(!feetOk) msg = 'Rapatkan kedua kaki.';
+  else msg = '✅ Sikap sempurna! Pertahankan…';
+
+  return {
+    ready,
+    checks:[
+      {name:'Tubuh Terlihat', ok:true},
+      {name:'Menghadap Kamera', ok:facingForward},
+      {name:'Tubuh Tegak', ok:bodyStraight},
+      {name:'Lutut Lurus', ok:kneeStraight},
+      {name:'Tangan di Samping', ok:armsAtSide},
+      {name:'Kaki Rapat', ok:feetOk}
+    ],
+    msg
+  };
+}
+const SVGS={
+
+  /* ---- JUMPING JACK ---- */
+  jj:{
+    labelA:'Kaki Rapat, Tangan Bawah',
+    labelB:'Kaki Lebar, Tangan Atas',
+    a:`<svg width="130" height="200" viewBox="0 0 130 200" fill="none">
+      <circle cx="65" cy="22" r="16" fill="#00e5ff" opacity=".85"/>
+      <line x1="65" y1="38" x2="65" y2="105" stroke="#00e5ff" stroke-width="6" stroke-linecap="round"/>
+      <!-- arms down / close -->
+      <line x1="65" y1="58" x2="38" y2="78" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <line x1="38" y1="78" x2="28" y2="100" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+      <line x1="65" y1="58" x2="92" y2="78" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <line x1="92" y1="78" x2="102" y2="100" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+      <!-- legs together -->
+      <line x1="65" y1="105" x2="54" y2="160" stroke="#00e5ff" stroke-width="6" stroke-linecap="round"/>
+      <line x1="54" y1="160" x2="50" y2="195" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
+      <line x1="65" y1="105" x2="76" y2="160" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <line x1="76" y1="160" x2="80" y2="195" stroke="#fdd835" stroke-width="5" stroke-linecap="round"/>
+    </svg>`,
+    b:`<svg width="130" height="200" viewBox="0 0 130 200" fill="none">
+      <circle cx="65" cy="22" r="16" fill="#00e676" opacity=".85"/>
+      <line x1="65" y1="38" x2="65" y2="105" stroke="#00e676" stroke-width="6" stroke-linecap="round"/>
+      <!-- arms UP & wide -->
+      <line x1="65" y1="55" x2="14" y2="22" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
+      <line x1="14" y1="22" x2="5"  y2="36" stroke="#00e5ff" stroke-width="4" stroke-linecap="round"/>
+      <line x1="65" y1="55" x2="116" y2="22" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
+      <line x1="116" y1="22" x2="125" y2="36" stroke="#00e5ff" stroke-width="4" stroke-linecap="round"/>
+      <!-- legs wide -->
+      <line x1="65" y1="105" x2="26"  y2="165" stroke="#00e676" stroke-width="6" stroke-linecap="round"/>
+      <line x1="26"  y1="165" x2="14"  y2="195" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <line x1="65" y1="105" x2="104" y2="165" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <line x1="104" y1="165" x2="116" y2="195" stroke="#fdd835" stroke-width="5" stroke-linecap="round"/>
+      <!-- up arrows -->
+      <line x1="8" y1="45" x2="8" y2="25" stroke="#fdd835" stroke-width="2" stroke-dasharray="3 2" opacity=".7"/>
+      <polygon points="8,18 4,28 12,28" fill="#fdd835" opacity=".7"/>
+      <line x1="122" y1="45" x2="122" y2="25" stroke="#fdd835" stroke-width="2" stroke-dasharray="3 2" opacity=".7"/>
+      <polygon points="122,18 118,28 126,28" fill="#fdd835" opacity=".7"/>
+    </svg>`
+  },
+
+  /* ---- SQUAT ---- */
+  sq:{
+    labelA:'Berdiri Tegak',
+    labelB:'Jongkok (~90°)',
+    a:`<svg width="130" height="210" viewBox="0 0 130 210" fill="none">
+      <circle cx="65" cy="22" r="16" fill="#fdd835" opacity=".85"/>
+      <!-- torso straight -->
+      <line x1="65" y1="38" x2="65" y2="110" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <!-- arms relaxed -->
+      <line x1="65" y1="60" x2="42" y2="80" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <line x1="42" y1="80" x2="36" y2="102" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+      <line x1="65" y1="60" x2="88" y2="80" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <line x1="88" y1="80" x2="94" y2="102" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+      <!-- legs straight -->
+      <line x1="57" y1="110" x2="50" y2="168" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <line x1="50" y1="168" x2="46" y2="205" stroke="#fdd835" stroke-width="5" stroke-linecap="round"/>
+      <line x1="73" y1="110" x2="80" y2="168" stroke="#00e5ff" stroke-width="6" stroke-linecap="round"/>
+      <line x1="80" y1="168" x2="84" y2="205" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
+      <!-- angle markers (straight) -->
+      <text x="65" y="178" text-anchor="middle" fill="#fdd835" font-size="11" opacity=".6">180°</text>
+    </svg>`,
+    b:`<svg width="130" height="200" viewBox="0 0 130 200" fill="none">
+      <circle cx="65" cy="22" r="16" fill="#00e5ff" opacity=".85"/>
+      <!-- torso lean fwd -->
+      <line x1="65" y1="38" x2="58" y2="105" stroke="#00e5ff" stroke-width="6" stroke-linecap="round"/>
+      <!-- arms extended forward for balance -->
+      <line x1="60" y1="68" x2="22" y2="72" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <line x1="22" y1="72" x2="6"  y2="75" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+      <line x1="60" y1="68" x2="98" y2="72" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <line x1="98" y1="72" x2="114" y2="75" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+      <!-- thighs going down -->
+      <line x1="50" y1="105" x2="26"  y2="148" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <line x1="66" y1="105" x2="92"  y2="148" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <!-- shins going down/back (knee bend ~90) -->
+      <line x1="26"  y1="148" x2="30"  y2="192" stroke="#fdd835" stroke-width="5" stroke-linecap="round"/>
+      <line x1="92"  y1="148" x2="88"  y2="192" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
+      <!-- angle arc left knee -->
+      <path d="M 40 150 Q 28 160 32 172" stroke="#fdd835" stroke-width="2" fill="none" stroke-dasharray="4 2" opacity=".7"/>
+      <text x="8" y="170" fill="#fdd835" font-size="10" opacity=".7">~90°</text>
+    </svg>`
+  },
+
+  /* ---- LARI DI TEMPAT ---- */
+  run:{
+    labelA:'Lutut Kiri Naik',
+    labelB:'Lutut Kanan Naik',
+    a:`<svg width="130" height="210" viewBox="0 0 130 210" fill="none">
+      <circle cx="65" cy="22" r="16" fill="#00e676" opacity=".85"/>
+      <!-- torso slight lean -->
+      <line x1="65" y1="38" x2="62" y2="115" stroke="#00e676" stroke-width="6" stroke-linecap="round"/>
+      <!-- left arm forward (counter to left knee up) -->
+      <line x1="62" y1="68" x2="92" y2="82" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
+      <line x1="92" y1="82" x2="108" y2="108" stroke="#00e5ff" stroke-width="4" stroke-linecap="round"/>
+      <!-- right arm back -->
+      <line x1="62" y1="68" x2="34" y2="76" stroke="#fdd835" stroke-width="5" stroke-linecap="round"/>
+      <line x1="34" y1="76" x2="22" y2="56" stroke="#fdd835" stroke-width="4" stroke-linecap="round"/>
+      <!-- LEFT knee UP (highlighted) -->
+      <line x1="55" y1="115" x2="42"  y2="145" stroke="#00e676" stroke-width="7" stroke-linecap="round"/>
+      <line x1="42"  y1="145" x2="50"  y2="115" stroke="#00e676" stroke-width="6" stroke-linecap="round"/>
+      <!-- knee circle highlight -->
+      <circle cx="42" cy="145" r="10" fill="none" stroke="#00e676" stroke-width="2.5" opacity=".7"/>
+      <!-- right leg down (support) -->
+      <line x1="70" y1="115" x2="82" y2="170" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <line x1="82" y1="170" x2="86" y2="205" stroke="#fdd835" stroke-width="5" stroke-linecap="round"/>
+      <!-- up arrow on left knee -->
+      <line x1="38" y1="138" x2="38" y2="118" stroke="#00e676" stroke-width="2.5" stroke-dasharray="3 2" opacity=".8"/>
+      <polygon points="38,110 33,122 43,122" fill="#00e676" opacity=".8"/>
+    </svg>`,
+    b:`<svg width="130" height="210" viewBox="0 0 130 210" fill="none">
+      <circle cx="65" cy="22" r="16" fill="#fdd835" opacity=".85"/>
+      <line x1="65" y1="38" x2="68" y2="115" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <!-- right arm forward (counter to right knee up) -->
+      <line x1="68" y1="68" x2="36" y2="82" stroke="#00e5ff" stroke-width="5" stroke-linecap="round"/>
+      <line x1="36" y1="82" x2="20" y2="108" stroke="#00e5ff" stroke-width="4" stroke-linecap="round"/>
+      <!-- left arm back -->
+      <line x1="68" y1="68" x2="96" y2="76" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <line x1="96" y1="76" x2="108" y2="56" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+      <!-- left leg down (support) -->
+      <line x1="60" y1="115" x2="48" y2="170" stroke="#00e676" stroke-width="6" stroke-linecap="round"/>
+      <line x1="48" y1="170" x2="44" y2="205" stroke="#00e676" stroke-width="5" stroke-linecap="round"/>
+      <!-- RIGHT knee UP (highlighted) -->
+      <line x1="76" y1="115" x2="90"  y2="145" stroke="#fdd835" stroke-width="7" stroke-linecap="round"/>
+      <line x1="90"  y1="145" x2="80"  y2="118" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="90" cy="145" r="10" fill="none" stroke="#fdd835" stroke-width="2.5" opacity=".7"/>
+      <!-- up arrow on right knee -->
+      <line x1="94" y1="138" x2="94" y2="118" stroke="#fdd835" stroke-width="2.5" stroke-dasharray="3 2" opacity=".8"/>
+      <polygon points="94,110 89,122 99,122" fill="#fdd835" opacity=".8"/>
+    </svg>`
+  }
+};
+
+/* ============================================================
+   MOVEMENTS CONFIG
+============================================================ */
+const MOVES=[
+  {
+    id:'jj', name:'Jumping Jack', icon:'⭐',
+    cat:'Aerobik', catIcon:'❤️',
+    svgKey:'jj',
+    phaseALabel:'Posisi TUTUP',
+    phaseBLabel:'Posisi BUKA',
+    desc:'Lompat membuka & menutup tangan–kaki secara bersamaan dan bergantian.',
+    benefits:[
+      'Meningkatkan detak jantung & sirkulasi darah',
+      'Melatih koordinasi gerak seluruh tubuh',
+      'Membakar kalori secara efektif dalam waktu singkat',
+      'Meningkatkan kelincahan & keseimbangan'
+    ],
+    steps:[
+      'Berdiri tegak, kaki rapat, tangan di samping (Fase Tutup)',
+      'Lompat sambil buka kaki selebar bahu & angkat tangan ke atas (Fase Buka)',
+      'Lompat kembali menutup kaki & turunkan tangan (Fase Tutup)',
+      'Ulangi dengan ritme konstan — 1 rep = Tutup → Buka → Tutup'
+    ],
+    threshInfo:'📐 Fase TUTUP: wrist di bawah bahu + kaki rapat (&lt;0.9× pinggul)<br>📐 Fase BUKA: wrist JAUH di atas bahu (−0.18 frame) + kaki lebar (&gt;1.5× pinggul)<br>✅ 1 Rep = transisi penuh TUTUP → BUKA → TUTUP',
+    targetReps:10,
+    detector: detectJJ,
+    /* State machine: 'A' → 'B' → 'A' = 1 rep, counted saat kembali ke A */
+    initPhase:'A',
+    nextPhase(phase,res){
+      if(!res)return phase;
+      if(phase==='A' && res.phaseB)return 'B';
+      if(phase==='B' && res.phaseA)return 'A';
+      return phase;
+    },
+    countOn:'A' /* rep dihitung saat masuk kembali ke fase A */
+  },
+  {
+    id:'sq', name:'Squat', icon:'🦵',
+    cat:'Kekuatan', catIcon:'🏋️',
+    svgKey:'sq',
+    phaseALabel:'Posisi BERDIRI',
+    phaseBLabel:'Posisi JONGKOK',
+    desc:'Tekuk lutut menurunkan tubuh hingga pinggul sejajar lutut, lalu kembali berdiri.',
+    benefits:[
+      'Memperkuat otot paha, betis, dan bokong',
+      'Meningkatkan kepadatan tulang kaki',
+      'Melatih keseimbangan dan stabilitas tubuh',
+      'Membakar kalori dengan melatih otot besar'
+    ],
+    steps:[
+      'Berdiri tegak, kaki selebar bahu, pandangan ke depan (Fase Berdiri)',
+      'Tekuk lutut perlahan menurunkan pinggul ke bawah',
+      'Turun hingga lutut membentuk sudut ±90° (Fase Jongkok)',
+      'Dorong naik kembali ke posisi berdiri tegak',
+      '1 rep = Berdiri → Jongkok → Berdiri'
+    ],
+    threshInfo:'📐 Fase BERDIRI: sudut lutut &gt;160° (lurus)<br>📐 Fase JONGKOK: sudut lutut &lt;120° (diperlonggar dari depan ≈ jongkok dalam)<br>✅ 1 Rep = transisi penuh BERDIRI → JONGKOK → BERDIRI<br>💡 Bayangkan duduk di kursi rendah — turunkan pinggul sejajar lutut!',
+    targetReps:10,
+    detector: detectSquat,
+    initPhase:'A',
+    nextPhase(phase,res){
+      if(!res)return phase;
+      if(phase==='A' && res.phaseB)return 'B';
+      if(phase==='B' && res.phaseA)return 'A';
+      return phase;
+    },
+    countOn:'A'
+  },
+  {
+    id:'run', name:'Lari di Tempat', icon:'🏃',
+    cat:'Aerobik', catIcon:'❤️',
+    svgKey:'run',
+    phaseALabel:'Lutut KIRI Naik',
+    phaseBLabel:'Lutut KANAN Naik',
+    desc:'Berlari di tempat dengan mengangkat lutut kiri–kanan bergantian sambil mengayunkan lengan.',
+    benefits:[
+      'Meningkatkan kesehatan jantung & paru-paru',
+      'Memperkuat otot kaki dan mempercepat metabolisme',
+      'Meningkatkan stamina dan daya tahan aerobik',
+      'Dapat dilakukan tanpa peralatan & tempat luas'
+    ],
+    steps:[
+      'Berdiri tegak di tempat',
+      'Angkat lutut kiri setinggi pinggul sambil ayunkan lengan kanan ke depan (Fase Kiri)',
+      'Turunkan & langsung angkat lutut kanan dengan ayunan lengan kiri (Fase Kanan)',
+      'Bergantian kiri-kanan dengan ritme cepat',
+      '1 rep = Kiri → Kanan → Kiri'
+    ],
+    threshInfo:'📐 Fase KIRI: knee kiri &gt; hip kiri (angkat melewati pinggul)<br>📐 Fase KANAN: knee kanan &gt; hip kanan (angkat melewati pinggul)<br>✅ 1 Rep = transisi penuh KIRI → KANAN → KIRI',
+    targetReps:20,
+    detector: detectRun,
+    initPhase:'A',
+    nextPhase(phase,res){
+      if(!res)return phase;
+      if(phase==='A' && res.phaseB)return 'B';
+      if(phase==='B' && res.phaseA)return 'A';
+      return phase;
+    },
+    countOn:'A'
+  }
+];
+
+/* ============================================================
+   GAME STATE
+============================================================ */
+const G={
+  playerName:'', duration:30,
+  completedMoves:[], moveScores:{}, totalScore:0,
+  curMove:null,
+  /* per-session */
+  phase:'A', reps:0, sessScore:0,
+  totalFrames:0, matchedFrames:0,
+  repCooldown:0,
+  timerInterval:null, timeLeft:0,
+  /* === READY STATE (3-step: Sikap Sempurna → Fase A → Fase B → Countdown) ===
+     User HARUS lulus Sikap Sempurna DULU (kamera membaca tubuh dengan benar),
+     baru bisa demo Fase Awal dan Fase Akhir gerakan. */
+  isReady:false,           // true setelah ketiga checkpoint + countdown selesai
+  readyPostureOk:false,    // ✅ Sikap sempurna (langkah ①)
+  readyPhaseAOk:false,     // ✅ user memenuhi fase A (langkah ②)
+  readyPhaseBOk:false,     // ✅ user memenuhi fase B (langkah ③)
+  readyHoldP:0,            // counter hold sikap sempurna
+  readyHoldA:0,            // counter hold fase A
+  readyHoldB:0,            // counter hold fase B
+  READY_HOLD_TARGET:18,    // ~0.6 detik @30fps untuk konfirmasi tiap checkpoint
+  readyCountdown:0,        // 3..2..1..GO setelah ketiga checkpoint ok
+  /* === RESTART per gerakan (Bug 4) === */
+  restartsUsed:{},         // {moveId: count} max 1× per gerakan
+  /* === MOOD SURVEY === */
+  selectedMood:null,       // 1-5 emoji rating
+  selectedRPE:null,        // 1-5 Rating of Perceived Exertion
+  /* === ANALYTICS === */
+  biomechanicsLog:[],      // log sample angles untuk export research
+  /* === VERSUS MODE === */
+  mode:'solo',             // 'solo' atau 'versus' (turn-based 2 pemain)
+  player2Name:'',          // nama pemain 2 (versus mode)
+  currentPlayer:1,         // pemain aktif sekarang (1 atau 2)
+  p1Scores:{}, p2Scores:{},// terpisah {moveId:{score,reps,acc,stars}}
+  p1Total:0, p2Total:0,    // total skor masing2
+  p1Completed:[], p2Completed:[], // gerakan selesai masing2
+  /* mediapipe */
+  poseReady:false, camera:null, detectionPaused:false,
+  /* current display */
+  curAngles:{}, curFeedback:'', curCorrect:false
+};
+
+/* ============================================================
+   MEDIAPIPE INIT
+============================================================ */
+/* Guard: cegah frame baru masuk sebelum frame sebelumnya selesai diproses */
+let isProcessingFrame = false;
+/* Watchdog: reset pipeline jika tidak ada hasil > N ms */
+let poseWatchdog = null;
+const WATCHDOG_MS = 4000; // 4 detik tanpa hasil = stuck
+
+function resetWatchdog(){
+  if(poseWatchdog) clearTimeout(poseWatchdog);
+  poseWatchdog = setTimeout(()=>{
+    /* hanya trigger saat game aktif */
+    if(document.getElementById('s-game').classList.contains('active')){
+      console.warn('[Watchdog] Pose pipeline stuck — recreating…');
+      isProcessingFrame = false;
+      /* restart camera feed agar frame baru mengalir */
+      if(G.camera){
+        try{ G.camera.stop(); }catch(e){}
+        G.camera = null;
+      }
+      /* re-attach results handler dan restart */
+      if(G.poseObj){
+        G.poseObj.onResults(onPoseResults);
+      }
+      startCamera();
+      resetWatchdog();
+    }
+  }, WATCHDOG_MS);
+}
+function setLoad(pct,msg){
+  document.getElementById('load-bar').style.width=pct+'%';
+  document.getElementById('load-msg').textContent=msg;
+}
+
+function initMediaPipe(){
+  setLoad(10,'Memeriksa model AI…');
+
+  /* Bug 10: Probe dulu apakah ada file mediapipe lokal di ./assets/mediapipe/ */
+  probeLocalMediaPipe().then(hasLocal=>{
+    if(hasLocal){
+      window._USE_LOCAL_MP = true;
+      setLoad(15,'✓ Model lokal ditemukan — memuat dari assets/mediapipe/…');
+      console.log('[MediaPipe] Menggunakan model LOKAL dari ./assets/mediapipe/');
+    } else {
+      window._USE_LOCAL_MP = false;
+      setLoad(15,'Mengunduh model dari CDN (cache browser)…');
+      console.log('[MediaPipe] Menggunakan CDN (model lokal tidak ditemukan)');
+    }
+    _initPoseAfterProbe();
+  });
+}
+
+/* Probe: cek apakah file kunci mediapipe ada di ./assets/mediapipe/ */
+function probeLocalMediaPipe(){
+  return new Promise(resolve=>{
+    /* Cek file inti (pose_solution_packed_assets.data ATAU pose_landmark_full.tflite) */
+    const testFiles = [
+      './assets/mediapipe/pose_solution_packed_assets.data',
+      './assets/mediapipe/pose_landmark_full.tflite'
+    ];
+    let resolved = false;
+    let pending = testFiles.length;
+    let anyFound = false;
+
+    const finalize = ()=>{
+      if(resolved) return;
+      resolved = true;
+      resolve(anyFound);
+    };
+
+    testFiles.forEach(url=>{
+      fetch(url, {method:'HEAD'}).then(r=>{
+        if(r.ok && !resolved){
+          anyFound = true;
+          finalize();
+        } else {
+          pending--;
+          if(pending <= 0) finalize();
+        }
+      }).catch(()=>{
+        pending--;
+        if(pending <= 0) finalize();
+      });
+    });
+    /* Timeout 2 detik */
+    setTimeout(finalize, 2000);
+  });
+}
+
+function _initPoseAfterProbe(){
+  if(typeof Pose==='undefined'){
+    setLoad(0,'❌ Gagal memuat MediaPipe. Periksa koneksi internet.');
+    document.getElementById('load-msg').style.color='var(--red)';
+    return;
+  }
+  /* Bug 10: Pose model bisa diload LOKAL dari ./assets/mediapipe/
+     Cek ada tidaknya file lokal lewat probe; fallback ke CDN jika tidak ada */
+  const LOCAL_MP_BASE = './assets/mediapipe/';
+  const CDN_MP_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/pose/';
+
+  const pose = new Pose({
+    locateFile: (f) => {
+      /* Jika user sudah set window._USE_LOCAL_MP, force local */
+      if(window._USE_LOCAL_MP) return LOCAL_MP_BASE + f;
+      /* Default: pakai CDN (yang sudah ter-cache browser) */
+      return CDN_MP_BASE + f;
+    }
+  });
+  pose.setOptions({
+    modelComplexity:1,
+    smoothLandmarks:true,
+    enableSegmentation:false,
+    minDetectionConfidence:0.5,
+    minTrackingConfidence:0.5
+  });
+  setLoad(30,'Mengunduh model (±6MB)…');
+  pose.onResults(onPoseResults);
+  pose.initialize().then(()=>{
+    G.poseObj=pose;G.poseReady=true;
+    setLoad(100,'✅ Model siap!');
+    setTimeout(()=>{ document.getElementById('loading-modal').style.display='none'; },700);
+  }).catch(e=>{
+    console.error(e);
+    document.getElementById('load-msg').innerHTML=
+      `❌ Gagal memuat model.<br><small>${e.message}</small><br>
+       <button class="btn btn-orange btn-sm" style="margin-top:10px" onclick="location.reload()">🔄 Refresh</button>`;
+    document.getElementById('load-msg').style.color='var(--red)';
+  });
+  /* fake progress */
+  let p=30;
+  const t=setInterval(()=>{ p+=Math.random()*7; if(p>90){clearInterval(t);return} setLoad(Math.round(p),'Mengunduh model…'); },400);
+}
+
+/* ============================================================
+   CAMERA
+============================================================ */
+async function startCamera(){
+  const vid=document.getElementById('videoEl');
+  document.getElementById('no-cam').style.display='none';
+
+  /* JIKA KAMERA SUDAH AKTIF, jangan minta permission lagi — cukup resume */
+  if(G.camera && vid.srcObject){
+    /* video stream sudah ada, hanya pastikan playing */
+    try{
+      if(vid.paused) await vid.play();
+      isProcessingFrame = false;
+      resetWatchdog();
+      console.log('[Camera] resumed existing stream (no re-permission)');
+      return true;
+    }catch(e){
+      console.warn('[Camera] resume failed, will restart:',e);
+      /* fall through to full restart */
+    }
+  }
+
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({
+      video:{width:{ideal:640},height:{ideal:480},facingMode:'user'},audio:false
+    });
+    vid.srcObject=stream;
+    await vid.play();
+    G.camera=new Camera(vid,{
+      onFrame:async()=>{
+        /* GUARD: skip frame jika masih memproses frame sebelumnya */
+        if(isProcessingFrame) return;
+        if(!G.poseObj || !G.poseReady) return;
+        /* GUARD: skip frame jika sedang di paused state */
+        if(G.detectionPaused) return;
+        isProcessingFrame = true;
+        try{
+          await G.poseObj.send({image:vid});
+        }catch(e){
+          console.warn('[Camera] frame send error:',e);
+        }finally{
+          isProcessingFrame = false;
+        }
+      },
+      width:640,height:480
+    });
+    G.camera.start();
+    isProcessingFrame = false;
+    resetWatchdog();
+    return true;
+  }catch(e){
+    console.error('Camera:',e);
+    document.getElementById('no-cam').style.display='flex';
+    return false;
+  }
+}
+
+/* PAUSE deteksi — kamera tetap aktif, hanya pose processing dihentikan.
+   Dipakai antar gerakan agar tidak minta permission ulang. */
+function pauseDetection(){
+  G.detectionPaused = true;
+  isProcessingFrame = false;
+  /* matikan watchdog selama pause (tidak boleh trigger restart) */
+  if(poseWatchdog){ clearTimeout(poseWatchdog); poseWatchdog=null; }
+  console.log('[Detection] paused (camera kept alive)');
+}
+
+function resumeDetection(){
+  G.detectionPaused = false;
+  isProcessingFrame = false;
+  resetWatchdog();
+  console.log('[Detection] resumed');
+}
+
+/* FULL stop — destroy semuanya. Hanya panggil saat keluar dari aplikasi. */
+function stopCamera(){
+  if(poseWatchdog){ clearTimeout(poseWatchdog); poseWatchdog=null; }
+  isProcessingFrame = false;
+  G.detectionPaused = true;
+  if(G.camera){try{G.camera.stop()}catch(e){} G.camera=null;}
+  const v=document.getElementById('videoEl');
+  if(v.srcObject){v.srcObject.getTracks().forEach(t=>t.stop());v.srcObject=null;}
+}
+
+function retryCam(){ startCamera(); }
+
+/* ============================================================
+   POSE RESULTS — main detection loop
+============================================================ */
+const pCvs=document.getElementById('poseCanvas');
+const pCtx=pCvs.getContext('2d');
+let isCorrectPose=false;
+
+function onPoseResults(results){
+  /* Pipeline hidup — reset watchdog */
+  resetWatchdog();
+  isProcessingFrame = false; /* pastikan flag selalu direset */
+
+  pCtx.clearRect(0,0,640,480);
+  /* only process when game screen active */
+  if(!document.getElementById('s-game').classList.contains('active'))return;
+  if(!results.poseLandmarks)return;
+
+  const lms=results.poseLandmarks;
+  if(!G.curMove)return;
+
+  /* ===========================================================
+     READY PHASE (3 langkah): user harus lulus berurutan:
+       ① Sikap Sempurna  → kamera membaca tubuh dengan benar
+       ② Fase Awal       → user paham posisi awal gerakan
+       ③ Fase Akhir      → user paham posisi akhir gerakan
+     Setelah ketiganya: countdown 3-2-1-GO, lalu timer mulai.
+  =========================================================== */
+  if(!G.isReady){
+    const det = G.curMove.detector(lms);
+    drawSkeleton(lms, pCtx, det && (det.phaseA || det.phaseB));
+
+    if(!det){
+      updateFeedback('Mundur sedikit — seluruh tubuh harus terlihat kamera!', false);
+      updatePhaseHUD(false, false);
+      document.getElementById('ready-sub').textContent =
+        'Mundur sedikit dari kamera agar SELURUH tubuh terlihat.';
+      return;
+    }
+
+    /* === LANGKAH ①: SIKAP SEMPURNA === */
+    if(!G.readyPostureOk){
+      const att = detectAttention(lms);
+      if(att.ready){
+        G.readyHoldP++;
+        const pct = Math.min(1, G.readyHoldP / G.READY_HOLD_TARGET);
+        updateReadyPhaseUI('s', 'detecting', `Hold… ${Math.ceil(pct*100)}%`);
+        if(G.readyHoldP >= G.READY_HOLD_TARGET){
+          G.readyPostureOk = true;
+          updateReadyPhaseUI('s', 'done', '✅ Lulus!');
+          /* Buka kunci fase A */
+          updateReadyPhaseUI('a', '', '⏳ Tunggu');
+          sfx.correct();
+        }
+      } else {
+        G.readyHoldP = Math.max(0, G.readyHoldP - 2);
+        updateReadyPhaseUI('s', '', '⏳ Tunggu');
+      }
+      /* Feedback khusus sikap sempurna */
+      document.getElementById('ready-sub').textContent =
+        '① SIKAP SEMPURNA — ' + (att.msg || 'Berdiri tegak, tangan di samping, kaki rapat-sedang');
+      updateFeedback(att.msg || 'Berdiri sikap sempurna…', att.ready);
+      updatePhaseHUD(false, false);
+      return; /* Belum boleh cek fase A/B */
+    }
+
+    /* === LANGKAH ②: FASE AWAL === */
+    if(!G.readyPhaseAOk){
+      if(det.phaseA){
+        G.readyHoldA++;
+        const pct = Math.min(1, G.readyHoldA / G.READY_HOLD_TARGET);
+        updateReadyPhaseUI('a', 'detecting', `Hold… ${Math.ceil(pct*100)}%`);
+        if(G.readyHoldA >= G.READY_HOLD_TARGET){
+          G.readyPhaseAOk = true;
+          updateReadyPhaseUI('a', 'done', '✅ Lulus!');
+          updateReadyPhaseUI('b', '', '⏳ Tunggu'); /* Buka kunci fase B */
+          sfx.correct();
+        }
+      } else {
+        G.readyHoldA = Math.max(0, G.readyHoldA - 2);
+        updateReadyPhaseUI('a', '', '⏳ Tunggu');
+      }
+    }
+
+    /* === LANGKAH ③: FASE AKHIR === */
+    if(G.readyPhaseAOk && !G.readyPhaseBOk){
+      if(det.phaseB){
+        G.readyHoldB++;
+        const pct = Math.min(1, G.readyHoldB / G.READY_HOLD_TARGET);
+        updateReadyPhaseUI('b', 'detecting', `Hold… ${Math.ceil(pct*100)}%`);
+        if(G.readyHoldB >= G.READY_HOLD_TARGET){
+          G.readyPhaseBOk = true;
+          updateReadyPhaseUI('b', 'done', '✅ Lulus!');
+          sfx.correct();
+        }
+      } else {
+        G.readyHoldB = Math.max(0, G.readyHoldB - 2);
+        updateReadyPhaseUI('b', '', '⏳ Tunggu');
+      }
+    }
+
+    /* Feedback teks */
+    let subMsg = '';
+    if(!G.readyPhaseAOk){
+      subMsg = `② Tunjukkan FASE AWAL: ${G.curMove.phaseALabel}`;
+    } else if(!G.readyPhaseBOk){
+      subMsg = `③ Bagus! Sekarang tunjukkan FASE AKHIR: ${G.curMove.phaseBLabel}`;
+    } else {
+      subMsg = '✅ Ketiganya lulus! Bersiap dalam 3 detik…';
+    }
+    document.getElementById('ready-sub').textContent = subMsg;
+    updateFeedback(
+      det.phaseA ? det.feedbackA : (det.phaseB ? det.feedbackB : 'Coba sesuaikan posisi dengan referensi…'),
+      det.phaseA || det.phaseB
+    );
+    updatePhaseHUD(det.phaseA, det.phaseB);
+    updateAngleGrid(det.angles);
+
+    /* === KETIGA CHECKPOINT LULUS — countdown 3..2..1..GO === */
+    if(G.readyPostureOk && G.readyPhaseAOk && G.readyPhaseBOk){
+      const ringWrap = document.getElementById('ready-ring-wrap');
+      ringWrap.style.display = 'block';
+      G.readyCountdown += 1;
+      const totalFrames = 90; /* 3 detik @30fps */
+      const pct = Math.min(1, G.readyCountdown / totalFrames);
+      updateReadyRing(pct);
+      const secLeft = Math.max(0, Math.ceil((totalFrames - G.readyCountdown) / 30));
+      const rrNum = document.getElementById('rr-num');
+      rrNum.classList.add('detecting');
+      rrNum.textContent = secLeft > 0 ? secLeft : 'GO!';
+      if(G.readyCountdown % 30 === 1 && secLeft > 0) sfx.tick();
+
+      if(G.readyCountdown >= totalFrames){
+        G.isReady = true;
+        sfx.ready();
+        hideReadyOverlay();
+        playGameMusic();
+        startTimer();
+      }
+    }
+    return;
+  }
+
+  /* ===========================================================
+     PLAYING PHASE: deteksi gerakan normal
+  =========================================================== */
+
+  const det=G.curMove.detector(lms);
+  if(!det){
+    updateFeedback('Seluruh tubuh harus terlihat kamera! Mundur sedikit.',false);
+    drawSkeleton(lms,pCtx,false);
+    updateAngleGrid({});
+    updatePhaseHUD(false,false);
+    return;
+  }
+
+  G.totalFrames++;
+  const anyMatch = det.phaseA||det.phaseB;
+  if(anyMatch) G.matchedFrames++;
+  isCorrectPose=anyMatch;
+
+  /* Log biomekanika setiap 6 frame (~5Hz) untuk data penelitian */
+  if(G.totalFrames % 6 === 0){
+    logBiomech(G.curMove.id, G.phase, det.angles, anyMatch);
+  }
+
+  drawSkeleton(lms,pCtx,anyMatch);
+  updateAngleGrid(det.angles);
+  updateMatchRing(anyMatch);
+
+  /* Determine current active phase & feedback */
+  const inPhaseA = det.phaseA;
+  const inPhaseB = det.phaseB;
+  updatePhaseHUD(inPhaseA, inPhaseB);
+
+  /* Show feedback for the phase we're TRYING to reach */
+  let fb='';
+  if(G.phase==='A'){
+    /* target is A (starting position) */
+    fb = inPhaseA ? det.feedbackA : det.feedbackA;
+  } else {
+    /* target is B */
+    fb = inPhaseB ? det.feedbackB : det.feedbackB;
+  }
+  updateFeedback(fb, anyMatch);
+
+  /* State machine */
+  if(G.repCooldown>0){ G.repCooldown--; return; }
+  const newPhase=G.curMove.nextPhase(G.phase,det);
+  if(newPhase!==G.phase){
+    G.phase=newPhase;
+    if(newPhase===G.curMove.countOn){
+      countRep();
+      G.repCooldown=8; /* ~0.27s debounce at 30fps */
+    }
+  }
+}
+
+function updatePhaseHUD(inA, inB){
+  const boxA=document.getElementById('ph-box-a');
+  const boxB=document.getElementById('ph-box-b');
+  const stA =document.getElementById('ph-a-status');
+  const stB =document.getElementById('ph-b-status');
+
+  boxA.className='ph-box'+(G.phase==='A'?' ph-active':'')+(inA?' ph-done':'');
+  boxB.className='ph-box'+(G.phase==='B'?' ph-active':'')+(inB?' ph-done':'');
+  stA.textContent = inA ? '✅ TERDETEKSI' : (G.phase==='A'?'⏳ TARGET':'–');
+  stB.textContent = inB ? '✅ TERDETEKSI' : (G.phase==='B'?'⏳ TARGET':'–');
+  stA.style.color = inA?'var(--green)':(G.phase==='A'?'var(--accent)':'var(--muted)');
+  stB.style.color = inB?'var(--green)':(G.phase==='B'?'var(--accent)':'var(--muted)');
+}
+
+function countRep(){
+  G.reps++;
+  const pts=10;
+  G.sessScore+=pts;
+  document.getElementById('rep-count').textContent=G.reps;
+  document.getElementById('sess-score').textContent=G.sessScore;
+  sfx.rep();
+  /* score popup */
+  const pop=document.getElementById('score-pop');
+  pop.textContent='+'+pts;
+  pop.classList.remove('show');
+  void pop.offsetWidth;
+  pop.classList.add('show');
+  /* update hud */
+  document.getElementById('h-score').textContent=G.totalScore+G.sessScore;
+}
+
+function updateMatchRing(ok){
+  const r=document.getElementById('match-ring');
+  r.className='match-ring '+(ok?'ok':'bad');
+}
+
+function updateFeedback(msg,ok){
+  const el=document.getElementById('fb-strip');
+  el.className='fb-strip '+(ok?'ok':'bad');
+  el.textContent=msg;
+}
+
+function updateAngleGrid(angles){
+  const grid=document.getElementById('angle-grid');
+  if(!angles||!Object.keys(angles).length){grid.innerHTML='';return}
+  grid.innerHTML=Object.entries(angles).map(([n,d])=>`
+    <div class="ang-chip ${d.ok?'ok':'bad'}">
+      <div class="ang-name">${n}</div>
+      <div class="ang-val">${typeof d.val==='number'&&d.val<=1&&d.val>=0? (d.val?'✓':'✗') : d.val+(n.includes('Kaki')||n.includes('Angkat')?'':n==='Kaki Rapat'?'':'°')}</div>
+      <div class="ang-tgt">${d.target}</div>
+    </div>`
+  ).join('');
+}
+
+/* ============================================================
+   READY PHASE HELPERS
+============================================================ */
+function updateReadyRing(pct){
+  const circum = 314;
+  const prog = document.getElementById('rr-prog');
+  if(prog) prog.style.strokeDashoffset = circum * (1 - pct);
+}
+
+/* Update salah satu kotak fase (a/b) — class & status text */
+function updateReadyPhaseUI(which, klass, statText){
+  const box  = document.getElementById('ready-p'+which);
+  const stat = document.getElementById('ready-p'+which+'-stat');
+  if(!box || !stat) return;
+  box.className = 'ready-phase-box' + (klass?(' '+klass):'');
+  stat.textContent = statText;
+}
+
+function updateReadyChecklist(checks){
+  const grid = document.getElementById('angle-grid');
+  if(!checks){grid.innerHTML='';return}
+  grid.innerHTML = checks.map(c=>`
+    <div class="ang-chip ${c.ok?'ok':'bad'}" style="min-width:140px">
+      <div class="ang-name">${c.name}</div>
+      <div class="ang-val" style="font-size:17px">${c.ok?'✓':'✗'}</div>
+    </div>
+  `).join('');
+}
+
+function showReadyOverlay(){
+  document.getElementById('ready-overlay').classList.remove('hidden');
+  /* Set timer ring ke mode "waiting" — muted color, full circle */
+  const tProg = document.getElementById('tr-prog');
+  if(tProg){
+    tProg.classList.add('waiting');
+    tProg.style.strokeDashoffset = 0;
+  }
+  /* Timer angka jadi "—" */
+  document.getElementById('tr-num').textContent = '—';
+}
+
+function hideReadyOverlay(){
+  document.getElementById('ready-overlay').classList.add('hidden');
+  const tProg = document.getElementById('tr-prog');
+  if(tProg) tProg.classList.remove('waiting');
+}
+
+/* build joint bars */
+function buildJointBars(angles){
+  const bars=document.getElementById('joint-bars');
+  if(!angles){bars.innerHTML='';return}
+  bars.innerHTML=Object.entries(angles).map(([n,d])=>`
+    <div class="jbar">
+      <div class="jbar-lbl">${n.slice(0,7)}</div>
+      <div class="jbar-track"><div class="jbar-fill ${d.ok?'ok':''}" style="width:${d.ok?100:30}%"></div></div>
+    </div>`
+  ).join('');
+}
+
+/* ============================================================
+   TIMER
+============================================================ */
+function startTimer(){
+  G.timeLeft=G.duration;
+  updateTimerUI();
+  G.timerInterval=setInterval(()=>{
+    G.timeLeft--;
+    updateTimerUI();
+    if(G.timeLeft<=5&&G.timeLeft>0)sfx.tick();
+    if(G.timeLeft<=0){sfx.timeout();finishSession();}
+  },1000);
+}
+
+function stopTimer(){
+  if(G.timerInterval){clearInterval(G.timerInterval);G.timerInterval=null;}
+}
+
+function updateTimerUI(){
+  const circum=332,frac=G.timeLeft/G.duration;
+  const prog=document.getElementById('tr-prog');
+  const num=document.getElementById('tr-num');
+  if(prog){
+    prog.style.strokeDashoffset=circum*(1-frac);
+    prog.style.stroke=G.timeLeft<=5?'var(--red)':G.timeLeft<=10?'var(--orange)':'var(--accent)';
+  }
+  if(num)num.textContent=G.timeLeft;
+}
+
+function finishEarly(){sfx.click();finishSession();}
+
+/* ============================================================
+   RESTART per gerakan — MAX 1× per gerakan (Bug 4)
+============================================================ */
+function restartCurrentMove(){
+  if(!G.curMove) return;
+  const moveId = G.curMove.id;
+  const used = G.restartsUsed[moveId] || 0;
+  if(used >= 1){
+    sfx.wrong();
+    /* shake button */
+    const btn = document.getElementById('btn-restart');
+    if(btn){ btn.style.transform='translateX(-4px)'; setTimeout(()=>btn.style.transform='',100); }
+    return;
+  }
+  /* konfirmasi via custom UI (avoid alert yang bisa stuck kamera) */
+  if(!confirm(`Ulangi "${G.curMove.name}"?\n\nKamu hanya bisa restart 1× per gerakan. Skor & rep yang terkumpul akan HILANG.`)){
+    return;
+  }
+  G.restartsUsed[moveId] = used + 1;
+  sfx.click();
+
+  /* Stop timer, reset session, balik ke ready phase TANPA matikan kamera */
+  stopTimer();
+  playHomeMusic(); /* kembali ke musik home selama menunggu ready */
+  pauseDetection(); /* sementara pause */
+
+  /* Reset state penuh seperti startGame, TAPI tanpa start camera lagi */
+  G.phase = G.curMove.initPhase;
+  G.reps=0;G.sessScore=0;G.totalFrames=0;G.matchedFrames=0;G.repCooldown=0;
+  G.isReady=false;G.readyPostureOk=false;G.readyPhaseAOk=false;G.readyPhaseBOk=false;
+  G.readyHoldP=0;G.readyHoldA=0;G.readyHoldB=0;G.readyCountdown=0;
+
+  /* Reset calibration jika Squat */
+  if(G.curMove.id === 'sq') resetSquatCalibration();
+
+  /* UI reset */
+  document.getElementById('rep-count').textContent='0';
+  document.getElementById('sess-score').textContent='0';
+  const m=G.curMove;
+  const svgData=SVGS[m.svgKey];
+  updateReadyPhaseUI('s','','⏳ Tunggu');
+  updateReadyPhaseUI('a','','🔒 Terkunci');
+  updateReadyPhaseUI('b','','🔒 Terkunci');
+  document.getElementById('ready-pa-svg').innerHTML = svgData.a;
+  document.getElementById('ready-pb-svg').innerHTML = svgData.b;
+  document.getElementById('ready-title').textContent = m.name;
+  document.getElementById('ready-pa-name').textContent = m.phaseALabel;
+  document.getElementById('ready-pb-name').textContent = m.phaseBLabel;
+  document.getElementById('ready-sub').textContent = `Tunjukkan FASE AWAL: ${m.phaseALabel}`;
+  document.getElementById('ready-ring-wrap').style.display='none';
+  document.getElementById('rr-num').textContent='3';
+  document.getElementById('rr-num').classList.remove('detecting');
+  updateReadyRing(0);
+  showReadyOverlay();
+  updateRestartButton();
+
+  /* Resume detection */
+  setTimeout(()=>resumeDetection(), 100);
+}
+
+function updateRestartButton(){
+  const btn = document.getElementById('btn-restart');
+  if(!btn || !G.curMove) return;
+  const used = G.restartsUsed[G.curMove.id] || 0;
+  if(used >= 1){
+    /* sudah dipakai — sembunyikan/disable */
+    btn.style.display='none';
+  } else {
+    btn.style.display='inline-flex';
+    btn.textContent = '🔄 ULANG (1×)';
+  }
+}
+
+function finishSession(){
+  stopTimer(); sfx.complete();
+  /* KAMERA TETAP HIDUP — hanya pause processing (Bug 1+2: cegah permission loop) */
+  pauseDetection();
+  /* Stop musik permainan, kembali ke musik home */
+  playHomeMusic();
+  const m=G.curMove;
+  const acc=G.totalFrames>0?Math.round(G.matchedFrames/G.totalFrames*100):0;
+  const stars=G.reps>=m.targetReps*.8?3:G.reps>=m.targetReps*.5?2:1;
+
+  G.moveScores[m.id]={score:G.sessScore,reps:G.reps,acc,stars};
+  if(!G.completedMoves.includes(m.id))G.completedMoves.push(m.id);
+  G.totalScore+=G.sessScore;
+  document.getElementById('h-score').textContent=G.totalScore;
+  document.getElementById('h-done').textContent=G.completedMoves.length+'/3';
+
+  document.getElementById('ms-icon').textContent=m.icon;
+  document.getElementById('ms-title').textContent=m.name+' — Selesai!';
+  document.getElementById('ms-stars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('ms-score').textContent=G.sessScore;
+  document.getElementById('ms-reps').textContent=G.reps;
+  document.getElementById('ms-acc').textContent=acc+'%';
+  const msgs=[
+    'Semangat! Latihan lebih banyak agar gerakan makin tepat.',
+    'Lumayan bagus! Tubuhmu sudah merasakan manfaat aktivitas jasmani.',
+    '🌟 Luar biasa! Gerakanmu sangat tepat dan konsisten!'
+  ];
+  document.getElementById('ms-msg').textContent=msgs[stars-1];
+  const allDone=G.completedMoves.length>=MOVES.length;
+  document.getElementById('ms-next-btn').textContent=allDone?'🏆 Lihat Hasil':'Gerakan Lain →';
+
+  if(stars===3)launchConfetti(80);
+  go('s-game','s-mscore');
+}
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+function goSetup(){
+  au();
+  playHomeMusic();
+  go('s-intro','s-setup');
+}
+
+/* ============================================================
+   MODE SELECTION
+============================================================ */
+function startSolo(){
+  sfx.click();
+  au();
+  playHomeMusic();
+  G.mode = 'solo';
+  G.currentPlayer = 1;
+  go('s-intro','s-setup');
+}
+
+function startVersus(){
+  const p1 = document.getElementById('inp-vs-p1').value.trim();
+  const p2 = document.getElementById('inp-vs-p2').value.trim();
+  if(!p1 || !p2){
+    alert('⚠ Kedua nama pemain harus diisi!');
+    sfx.wrong();
+    return;
+  }
+  if(p1.toLowerCase() === p2.toLowerCase()){
+    alert('⚠ Nama pemain harus berbeda!');
+    sfx.wrong();
+    return;
+  }
+  G.mode = 'versus';
+  G.playerName = p1;
+  G.player2Name = p2;
+  G.currentPlayer = 1;
+  G.p1Scores = {}; G.p2Scores = {};
+  G.p1Total = 0;  G.p2Total = 0;
+  G.p1Completed = []; G.p2Completed = [];
+  G.completedMoves = [];
+  G.moveScores = {};
+  G.totalScore = 0;
+  sfx.click();
+  au();
+  playHomeMusic();
+  closeModal('m-versus');
+  /* Skip setup screen → langsung announce giliran */
+  setTimeout(()=>{
+    showTurnAnnouncer();
+  }, 300);
+}
+
+function showTurnAnnouncer(){
+  const isP1 = G.currentPlayer === 1;
+  const myName = isP1 ? G.playerName : G.player2Name;
+  const rivalName = isP1 ? G.player2Name : G.playerName;
+  const rivalScore = isP1 ? G.p2Total : G.p1Total;
+
+  document.getElementById('turn-icon').textContent = isP1 ? '🔵' : '🟠';
+  document.getElementById('turn-num').textContent = G.currentPlayer;
+  document.getElementById('turn-name').textContent = myName;
+  document.getElementById('turn-name-2').textContent = myName;
+  document.getElementById('turn-rival-score').textContent = rivalScore;
+  document.getElementById('turn-rival-name').textContent = rivalName + ' = ' + rivalScore + ' poin';
+
+  /* style color sesuai player */
+  document.getElementById('turn-name').style.color = isP1 ? 'var(--accent)' : 'var(--orange)';
+
+  openModal('m-turn');
+}
+
+function continueTurn(){
+  closeModal('m-turn');
+  sfx.click();
+  /* Set state untuk pemain ini */
+  loadPlayerState();
+  /* Update HUD untuk versus mode */
+  go('s-intro','s-select',()=>{
+    updateHUD();
+    renderMoveGrid();
+  });
+}
+
+/* Load state untuk pemain saat ini di Versus mode */
+function loadPlayerState(){
+  if(G.mode !== 'versus') return;
+  const isP1 = G.currentPlayer === 1;
+  G.completedMoves = isP1 ? [...G.p1Completed] : [...G.p2Completed];
+  G.moveScores = isP1 ? {...G.p1Scores} : {...G.p2Scores};
+  G.totalScore = isP1 ? G.p1Total : G.p2Total;
+  G.playerName = isP1 ? G.playerName : G.player2Name;
+  /* Note: G.playerName tetap pakai original p1 di main slot,
+     tapi displayName akan berubah */
+}
+
+/* Save state pemain saat ini setelah selesai semua gerakan */
+function savePlayerState(){
+  if(G.mode !== 'versus') return;
+  const isP1 = G.currentPlayer === 1;
+  if(isP1){
+    G.p1Completed = [...G.completedMoves];
+    G.p1Scores = {...G.moveScores};
+    G.p1Total = G.totalScore;
+  } else {
+    G.p2Completed = [...G.completedMoves];
+    G.p2Scores = {...G.moveScores};
+    G.p2Total = G.totalScore;
+  }
+}
+
+/* Display name yang aktif */
+function getActivePlayerName(){
+  if(G.mode === 'versus'){
+    return G.currentPlayer === 1 ? G.playerName : G.player2Name;
+  }
+  return G.playerName;
+}
+
+/* ============================================================
+   VERSUS RESULT — pertandingan 2 pemain
+============================================================ */
+function showVersusResult(){
+  /* Hitung statistik kedua pemain */
+  const p1Reps = Object.values(G.p1Scores).reduce((s,v)=>s+v.reps,0);
+  const p2Reps = Object.values(G.p2Scores).reduce((s,v)=>s+v.reps,0);
+  const p1Acc = Object.values(G.p1Scores).length
+    ? Math.round(Object.values(G.p1Scores).reduce((s,v)=>s+v.acc,0)/Object.values(G.p1Scores).length)
+    : 0;
+  const p2Acc = Object.values(G.p2Scores).length
+    ? Math.round(Object.values(G.p2Scores).reduce((s,v)=>s+v.acc,0)/Object.values(G.p2Scores).length)
+    : 0;
+
+  /* Hitung tier */
+  const maxScore = MOVES.reduce((s,m)=>s+m.targetReps*10,0);
+  const p1Comp = (p1Acc*0.6) + ((G.p1Total/maxScore)*100*0.3) + ((G.p1Completed.length/MOVES.length)*100*0.1);
+  const p2Comp = (p2Acc*0.6) + ((G.p2Total/maxScore)*100*0.3) + ((G.p2Completed.length/MOVES.length)*100*0.1);
+  const t1 = calcTier(p1Comp, p1Acc, G.p1Completed.length);
+  const t2 = calcTier(p2Comp, p2Acc, G.p2Completed.length);
+
+  /* Render kotak P1 */
+  document.getElementById('vs-p1-name').textContent = G.playerName;
+  document.getElementById('vs-p1-score').textContent = G.p1Total;
+  document.getElementById('vs-p1-reps').textContent = p1Reps;
+  document.getElementById('vs-p1-acc').textContent = p1Acc + '%';
+  const t1El = document.getElementById('vs-p1-tier');
+  t1El.textContent = t1.medal + ' ' + t1.name;
+  t1El.className = 'hist-tier ht-' + t1.tier;
+
+  /* Render kotak P2 */
+  document.getElementById('vs-p2-name').textContent = G.player2Name;
+  document.getElementById('vs-p2-score').textContent = G.p2Total;
+  document.getElementById('vs-p2-reps').textContent = p2Reps;
+  document.getElementById('vs-p2-acc').textContent = p2Acc + '%';
+  const t2El = document.getElementById('vs-p2-tier');
+  t2El.textContent = t2.medal + ' ' + t2.name;
+  t2El.className = 'hist-tier ht-' + t2.tier;
+
+  /* Tentukan pemenang berdasarkan TOTAL SKOR; tie-breaker: akurasi */
+  let winnerName, winnerIcon, winnerDetail;
+  if(G.p1Total > G.p2Total){
+    winnerName = G.playerName;
+    winnerIcon = '🥇';
+    winnerDetail = `Memenangkan dengan ${G.p1Total - G.p2Total} poin lebih banyak!`;
+  } else if(G.p2Total > G.p1Total){
+    winnerName = G.player2Name;
+    winnerIcon = '🥇';
+    winnerDetail = `Memenangkan dengan ${G.p2Total - G.p1Total} poin lebih banyak!`;
+  } else if(p1Acc > p2Acc){
+    winnerName = G.playerName;
+    winnerIcon = '🏅';
+    winnerDetail = `Skor sama (${G.p1Total}), menang melalui akurasi (${p1Acc}% vs ${p2Acc}%)`;
+  } else if(p2Acc > p1Acc){
+    winnerName = G.player2Name;
+    winnerIcon = '🏅';
+    winnerDetail = `Skor sama (${G.p2Total}), menang melalui akurasi (${p2Acc}% vs ${p1Acc}%)`;
+  } else {
+    winnerName = 'SERI!';
+    winnerIcon = '🤝';
+    winnerDetail = 'Kedua pemain memiliki performa yang setara.';
+  }
+  document.getElementById('vs-winner-icon').textContent = winnerIcon;
+  document.getElementById('vs-winner-name').textContent = winnerName.toUpperCase();
+  document.getElementById('vs-winner-detail').textContent = winnerDetail;
+
+  /* Tabel detail per gerakan */
+  const tableEl = document.getElementById('vs-detail-table');
+  let html = `<thead><tr>
+    <th>Gerakan</th>
+    <th style="color:var(--accent)">🔵 ${escapeHtml(G.playerName)}</th>
+    <th style="color:var(--orange)">🟠 ${escapeHtml(G.player2Name)}</th>
+    <th>Pemenang</th>
+  </tr></thead><tbody>`;
+  MOVES.forEach(m=>{
+    const s1 = G.p1Scores[m.id];
+    const s2 = G.p2Scores[m.id];
+    const v1 = s1 ? s1.score : 0;
+    const v2 = s2 ? s2.score : 0;
+    let winIc = '—';
+    if(v1 > v2) winIc = '🔵';
+    else if(v2 > v1) winIc = '🟠';
+    else if(v1 > 0) winIc = '🤝';
+    html += `<tr>
+      <td>${m.icon} ${m.name}</td>
+      <td>${s1?`${v1} pts<br><small style="color:var(--muted)">${s1.reps}r · ${s1.acc}%</small>`:'-'}</td>
+      <td>${s2?`${v2} pts<br><small style="color:var(--muted)">${s2.reps}r · ${s2.acc}%</small>`:'-'}</td>
+      <td style="font-size:18px">${winIc}</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  tableEl.innerHTML = html;
+
+  /* Simpan ke history sebagai versus session */
+  saveSessionHistory({
+    timestamp: new Date().toISOString(),
+    player: `${G.playerName} vs ${G.player2Name}`,
+    duration: G.duration,
+    totalScore: Math.max(G.p1Total, G.p2Total),
+    totalReps: Math.max(p1Reps, p2Reps),
+    avgAcc: Math.max(p1Acc, p2Acc),
+    completed: Math.max(G.p1Completed.length, G.p2Completed.length),
+    tier: `${t1.name} vs ${t2.name}`,
+    tierTier: G.p1Total >= G.p2Total ? t1.tier : t2.tier,
+    mode: 'versus',
+    winner: winnerName,
+    p1: { name: G.playerName, score: G.p1Total, reps: p1Reps, acc: p1Acc, tier: t1.name },
+    p2: { name: G.player2Name, score: G.p2Total, reps: p2Reps, acc: p2Acc, tier: t2.name }
+  });
+
+  /* Confetti untuk versus result */
+  launchConfetti(180);
+  sfx.complete();
+  stopAllMusic();
+  setTimeout(()=>playHomeMusic(), 400);
+  openModal('m-vs-result');
+}
+
+function startVersusRematch(){
+  /* Reset skor versus tapi tetap simpan nama 2 pemain */
+  G.p1Scores = {}; G.p2Scores = {};
+  G.p1Total = 0;  G.p2Total = 0;
+  G.p1Completed = []; G.p2Completed = [];
+  G.currentPlayer = 1;
+  G.completedMoves = [];
+  G.moveScores = {};
+  G.totalScore = 0;
+  G.restartsUsed = {};
+  /* Tampilkan turn announcer P1 */
+  setTimeout(()=>showTurnAnnouncer(), 200);
+}
+
+function pickDur(el){
+  document.querySelectorAll('.dur-p').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on'); G.duration=parseInt(el.dataset.d); sfx.click();
+}
+
+function confirmSetup(){
+  const n=document.getElementById('inp-name').value.trim();
+  if(!n){
+    const el=document.getElementById('inp-name');
+    el.style.borderColor='var(--red)';el.placeholder='⚠ Nama tidak boleh kosong!';
+    el.focus();sfx.wrong();
+    setTimeout(()=>{el.style.borderColor='';el.placeholder='Nama lengkap kamu…';},1800);
+    return;
+  }
+  G.playerName=n;
+  go('s-setup','s-select',()=>{renderMoveGrid();updateHUD();});
+}
+
+function updateHUD(){
+  const hud=document.getElementById('hud');
+  hud.style.display='flex';
+  const activeName = getActivePlayerName();
+  if(G.mode === 'versus'){
+    const isP1 = G.currentPlayer === 1;
+    const rivalName = isP1 ? G.player2Name : G.playerName;
+    const rivalScore = isP1 ? G.p2Total : G.p1Total;
+    const myColor = isP1 ? 'var(--accent)' : 'var(--orange)';
+    const rivalColor = isP1 ? 'var(--orange)' : 'var(--accent)';
+    /* Split-screen layout: aktif pemain di kiri (color), rival di kanan (dim) */
+    document.getElementById('h-name').innerHTML =
+      `<div style="display:flex;align-items:center;gap:14px">
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:1px">
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">▶ Giliran</div>
+          <div style="color:${myColor};font-weight:900;font-size:14px;text-shadow:0 0 12px ${myColor}">
+            ${isP1?'🔵':'🟠'} ${escapeHtml(activeName)}
+          </div>
+        </div>
+        <div style="font-size:14px;color:var(--muted);font-weight:900">VS</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:1px;opacity:.65">
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Lawan</div>
+          <div style="color:${rivalColor};font-weight:700;font-size:13px">
+            ${isP1?'🟠':'🔵'} ${escapeHtml(rivalName)} (${rivalScore})
+          </div>
+        </div>
+      </div>`;
+  } else {
+    document.getElementById('h-name').textContent = activeName;
+  }
+  document.getElementById('h-score').textContent = G.totalScore;
+  document.getElementById('h-done').textContent = G.completedMoves.length + '/' + MOVES.length;
+}
+
+function renderMoveGrid(){
+  const grid=document.getElementById('mov-grid');
+  grid.innerHTML=MOVES.map(m=>{
+    const done=G.completedMoves.includes(m.id);
+    const sc=done?(G.moveScores[m.id]?.score||0):'';
+    return `<div class="mov-card ${done?'done':''}" onclick="${done?'':'selectMove(\''+m.id+'\')'}">
+      <div class="done-ck">✓</div>
+      <div class="mov-icon">${getMoveIcon(m.id)}</div>
+      <div class="mov-name">${m.name}</div>
+      <div class="mov-cat">${m.catIcon} ${m.cat}</div>
+      ${done?`<div style="margin-top:8px;font-size:13px;color:var(--green);font-weight:800">${sc} pts · ${G.moveScores[m.id]?.reps||0} reps</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function refreshSelect(){ renderMoveGrid(); updateHUD(); }
+
+/* Konfirmasi kembali ke home — peringatan jika progress belum selesai */
+function confirmHome(){
+  sfx.click();
+  /* Jika user sudah selesai beberapa gerakan, beri peringatan */
+  if(G.completedMoves.length > 0 && G.completedMoves.length < 3){
+    if(!confirm(`⚠ Kamu sudah menyelesaikan ${G.completedMoves.length} gerakan.\n\nKembali ke beranda akan MENGHAPUS progres tersebut. Lanjutkan?`)){
+      return;
+    }
+  }
+  /* Stop kamera (full destroy) saat keluar dari area game */
+  stopCamera();
+  resetGame();
+  go('s-select','s-intro');
+}
+
+function selectMove(id){
+  sfx.click();
+  G.curMove=MOVES.find(m=>m.id===id);
+  showRef();
+}
+
+function showRef(){
+  const m=G.curMove;
+  document.getElementById('h-mov').textContent=m.name;
+
+  /* dual SVG */
+  const svgData=SVGS[m.svgKey];
+  document.getElementById('ref-svg-a').innerHTML=svgData.a;
+  document.getElementById('ref-svg-b').innerHTML=svgData.b;
+  document.getElementById('ref-phase-a-lbl').textContent=svgData.labelA;
+  document.getElementById('ref-phase-b-lbl').textContent=svgData.labelB;
+
+  document.getElementById('ref-title').textContent=m.name;
+  document.getElementById('ref-desc').textContent=m.desc;
+  document.getElementById('ref-benefits').innerHTML=m.benefits.map(b=>`<li>${b}</li>`).join('');
+  document.getElementById('ref-steps').innerHTML=m.steps.map((s,i)=>
+    `<div class="step-row"><div class="step-n">${i+1}</div><div class="step-t">${s}</div></div>`
+  ).join('');
+  document.getElementById('ref-thresh').innerHTML=m.threshInfo;
+
+  go('s-select','s-ref');
+}
+
+async function startGame(){
+  if(!G.poseReady){
+    alert('Model AI belum siap. Tunggu loading selesai atau refresh halaman.');
+    return;
+  }
+  /* reset session */
+  G.phase=G.curMove.initPhase;
+  G.reps=0;G.sessScore=0;G.totalFrames=0;G.matchedFrames=0;G.repCooldown=0;
+  /* reset READY state — 3 langkah */
+  G.isReady = false;
+  G.readyPostureOk = false;
+  G.readyPhaseAOk = false;
+  G.readyPhaseBOk = false;
+  G.readyHoldP = 0;
+  G.readyHoldA = 0;
+  G.readyHoldB = 0;
+  G.readyCountdown = 0;
+  /* RESET adaptive calibration untuk Squat — baseline akan diambil ulang
+     dari sample berdiri di sesi baru */
+  if(G.curMove.id === 'sq') resetSquatCalibration();
+
+  /* UI reset */
+  document.getElementById('rep-count').textContent='0';
+  document.getElementById('sess-score').textContent='0';
+  document.getElementById('rep-tgt').textContent=G.curMove.targetReps;
+  document.getElementById('angle-grid').innerHTML='';
+  document.getElementById('fb-strip').className='fb-strip';
+  document.getElementById('fb-strip').textContent='Tunjukkan sikap sempurna untuk memulai!';
+  document.getElementById('match-ring').className='match-ring';
+
+  /* phase HUD labels */
+  const m=G.curMove;
+  document.getElementById('ph-a-title').textContent=m.phaseALabel;
+  document.getElementById('ph-b-title').textContent=m.phaseBLabel;
+  document.getElementById('ph-a-status').textContent='⏳ TARGET';
+  document.getElementById('ph-b-status').textContent='–';
+
+  /* mini ref */
+  const svgData=SVGS[m.svgKey];
+  document.getElementById('cam-ref-mini').innerHTML=svgData.a;
+
+  /* Reset ready overlay — TITLE + LABEL & SVG kedua fase */
+  document.getElementById('ready-title').textContent = m.name;
+  document.getElementById('ready-pa-name').textContent = m.phaseALabel;
+  document.getElementById('ready-pb-name').textContent = m.phaseBLabel;
+  document.getElementById('ready-pa-svg').innerHTML = svgData.a;
+  document.getElementById('ready-pb-svg').innerHTML = svgData.b;
+  updateReadyPhaseUI('s', '', '⏳ Tunggu');
+  updateReadyPhaseUI('a', '', '🔒 Terkunci');
+  updateReadyPhaseUI('b', '', '🔒 Terkunci');
+  document.getElementById('ready-sub').textContent =
+    `① SIKAP SEMPURNA — Berdiri tegak, tangan di samping, kaki rapat-sedang`;
+  document.getElementById('ready-ring-wrap').style.display = 'none';
+  document.getElementById('rr-num').textContent = '3';
+  document.getElementById('rr-num').classList.remove('detecting');
+  updateReadyRing(0);
+  showReadyOverlay();
+
+  /* Update restart button state */
+  updateRestartButton();
+
+  go('s-ref','s-game',async()=>{
+    /* KAMERA — jika sudah aktif, hanya resume; jika belum, start baru.
+       Ini fix Bug 1 & 2: tidak minta permission ulang. */
+    const ok = await startCamera();
+    if(ok){
+      resumeDetection();
+    }
+  });
+}
+
+function checkMore(){
+  sfx.click();
+  if(G.completedMoves.length>=MOVES.length){
+    if(G.mode === 'versus'){
+      /* Simpan state pemain saat ini */
+      savePlayerState();
+      stopCamera();
+      if(G.currentPlayer === 1){
+        /* Giliran berpindah ke P2 */
+        G.currentPlayer = 2;
+        G.completedMoves = [];
+        G.moveScores = {};
+        G.totalScore = 0;
+        G.restartsUsed = {};
+        go('s-mscore','s-intro',()=>{
+          /* sembunyikan HUD sementara */
+          document.getElementById('hud').style.display='none';
+        });
+        setTimeout(()=>showTurnAnnouncer(), 600);
+      } else {
+        /* Kedua pemain selesai → hasil pertandingan */
+        showVersusResult();
+      }
+    } else {
+      showResult();
+    }
+  } else {
+    go('s-mscore','s-select',()=>{ renderMoveGrid(); updateHUD(); });
+  }
+}
+
+function showResult(){
+  const totalReps=Object.values(G.moveScores).reduce((s,v)=>s+v.reps,0);
+  const avgAcc=G.completedMoves.length?
+    Math.round(Object.values(G.moveScores).reduce((s,v)=>s+v.acc,0)/G.completedMoves.length):0;
+
+  let grade,gc,gb,sub,motiv;
+  if(avgAcc>=80){
+    grade='A';gc='var(--accent)';gb='rgba(0,229,255,.1)';
+    sub='🌟 Luar biasa! Gerakanmu sangat tepat dan penuh semangat!';
+    motiv=`<em>Selamat, ${G.playerName}!</em> Kamu telah membuktikan bahwa aktivitas jasmani teratur meningkatkan kebugaran. Terapkan dalam keseharianmu!`;
+  }else if(avgAcc>=60){
+    grade='B';gc='var(--green)';gb='rgba(0,230,118,.08)';
+    sub='👍 Bagus! Gerakanmu sudah baik dan konsisten.';
+    motiv=`<em>${G.playerName}</em>, aktivitas jasmani yang kamu lakukan sangat baik untuk tubuh. Latihan rutin membuat gerakanmu makin sempurna!`;
+  }else if(avgAcc>=40){
+    grade='C';gc='var(--yellow)';gb='rgba(253,216,53,.08)';
+    sub='😊 Cukup baik! Terus berlatih agar gerakanmu makin tepat.';
+    motiv=`<em>${G.playerName}</em>, manfaat kesehatan datang dari kebiasaan. Lakukan gerakan ini setiap hari — tubuhmu akan semakin bugar!`;
+  }else{
+    grade='D';gc='var(--orange)';gb='rgba(255,109,0,.08)';
+    sub='💪 Semangat! Setiap langkah kecil berarti besar bagi kesehatanmu.';
+    motiv=`<em>${G.playerName}</em>, memulai adalah langkah terpenting! Pelajari ulang pose yang benar, coba lagi, dan kamu pasti berkembang!`;
+  }
+
+  const gEl=document.getElementById('r-grade');
+  gEl.textContent=grade;gEl.style.color=gc;gEl.style.borderColor=gc;gEl.style.background=gb;
+  document.getElementById('r-name').textContent=G.playerName;
+  document.getElementById('r-sub').textContent=sub;
+  document.getElementById('r-total').textContent=G.totalScore;
+  document.getElementById('r-reps').textContent=totalReps;
+  document.getElementById('r-acc').textContent=avgAcc+'%';
+  document.getElementById('r-moves').textContent=G.completedMoves.length+'/3';
+  document.getElementById('r-motiv').innerHTML=motiv;
+
+  document.getElementById('r-details').innerHTML=MOVES.map(m=>{
+    const sc=G.moveScores[m.id];if(!sc)return'';
+    const col=sc.acc>=80?'var(--green)':sc.acc>=50?'var(--yellow)':'var(--red)';
+    return`<div class="det-row">
+      <span style="font-size:20px">${m.icon}</span>
+      <span>${m.name}</span>
+      <span style="color:var(--muted);font-size:13px">${sc.reps} reps · ${sc.acc}%</span>
+      <span class="det-sc" style="color:${col}">${sc.score} pts</span>
+    </div>`;
+  }).join('');
+
+  /* === HITUNG CAPAIAN === */
+  renderAchievements(totalReps, avgAcc);
+
+  /* === HITUNG & RENDER TIER === */
+  const maxPossibleScore = MOVES.reduce((s,m)=>s+m.targetReps*10, 0);
+  const scorePct = (G.totalScore / maxPossibleScore) * 100;
+  const completionRate = G.completedMoves.length / MOVES.length;
+  const composite = (avgAcc * 0.6) + (scorePct * 0.3) + (completionRate * 100 * 0.1);
+  const tier = calcTier(composite, avgAcc, G.completedMoves.length);
+  renderTier(tier);
+
+  /* === JURNAL REFLEKSI === */
+  renderReflectionJournal();
+
+  /* Reset mood & RPE */
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('.rpe-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('r-mood-reply').textContent='';
+  document.getElementById('r-rpe-reply').textContent='';
+  G.selectedMood = null;
+  G.selectedRPE = null;
+
+  /* === SIMPAN SESI KE LOCAL STORAGE === */
+  saveSessionHistory({
+    timestamp: new Date().toISOString(),
+    player: G.playerName,
+    duration: G.duration,
+    totalScore: G.totalScore,
+    totalReps,
+    avgAcc,
+    completed: G.completedMoves.length,
+    tier: tier.name,
+    tierTier: tier.tier,
+    moves: { ...G.moveScores },
+    restartsUsed: { ...G.restartsUsed },
+    biomechanics: G.biomechanicsLog || []
+  });
+
+  if(avgAcc>=80)launchConfetti(200);
+  /* SEKARANG kamera benar2 dimatikan karena sudah selesai semua gerakan */
+  stopCamera();
+  stopAllMusic();
+  /* Hidden: play home music sebagai background hasil */
+  setTimeout(()=>playHomeMusic(), 500);
+  go('s-mscore','s-result');
+}
+
+/* ============================================================
+   TIER GRADING — Bronze → Silver → Gold → Platinum → Diamond
+============================================================ */
+function calcTier(composite, avgAcc, completed){
+  if(composite>=85 && avgAcc>=85 && completed>=MOVES.length)
+    return {tier:'diamond', name:'DIAMOND', medal:'💎', desc:'Atlet Elite — performansi sempurna!'};
+  if(composite>=75 && completed>=MOVES.length)
+    return {tier:'platinum', name:'PLATINUM', medal:'🏆', desc:'Performansi luar biasa konsisten'};
+  if(composite>=60)
+    return {tier:'gold', name:'GOLD', medal:'🥇', desc:'Performansi sangat baik'};
+  if(composite>=40)
+    return {tier:'silver', name:'SILVER', medal:'🥈', desc:'Performansi baik — terus berlatih!'};
+  return {tier:'bronze', name:'BRONZE', medal:'🥉', desc:'Awal yang baik — semangat berlatih!'};
+}
+
+function renderTier(tier){
+  document.getElementById('r-tier-medal').textContent = tier.medal;
+  const nameEl = document.getElementById('r-tier-name');
+  nameEl.textContent = tier.name;
+  nameEl.className = 'tier-name ' + tier.tier;
+  document.getElementById('r-tier-desc').textContent = tier.desc;
+}
+
+/* ============================================================
+   JURNAL REFLEKSI — kaitkan dengan kehidupan sehari-hari
+============================================================ */
+function renderReflectionJournal(){
+  const reflections = {
+    jj: '🌅 <strong>Jumping Jack</strong> membantumu menjadi lebih bersemangat memulai hari! Detak jantungmu yang meningkat artinya tubuhmu mengirim oksigen lebih banyak ke otak — kamu akan lebih FOKUS saat belajar di kelas.',
+    sq: '🦵 <strong>Squat</strong> menguatkan otot kakimu! Saat naik tangga, main bola, atau berlari ke sekolah, kakimu jadi lebih kuat dan tidak mudah lelah. Squat juga melatih keseimbangan tubuhmu.',
+    run: '🏃 <strong>Lari di Tempat</strong> melatih jantung dan paru-paru. Anak yang rajin lari biasanya tidak mudah ngos-ngosan saat main, bersepeda, atau ikut lomba 17 Agustus!'
+  };
+  const doneRefs = G.completedMoves.map(id => reflections[id]).filter(Boolean);
+  const generalReflection = `
+    <p style="margin-bottom:10px">Setiap gerakan tadi punya manfaat nyata di hidupmu:</p>
+    <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+      ${doneRefs.map(r=>`<li style="padding-left:10px;border-left:2px solid var(--accent)">${r}</li>`).join('')}
+    </ul>
+    <p style="margin-top:14px;padding:10px 14px;background:rgba(0,217,255,.06);border-radius:10px;border:1px solid rgba(0,217,255,.18)">
+      💡 <strong style="color:var(--accent)">Renungkan:</strong> Aktivitas jasmani yang dilakukan TERATUR — minimal 30 menit setiap hari — akan membuat tubuhmu lebih sehat, pikiran lebih tajam, tidur lebih nyenyak, dan suasana hati lebih ceria. Mulai dari yang kecil hari ini!
+    </p>
+  `;
+  document.getElementById('r-reflection').innerHTML = generalReflection;
+}
+
+/* ============================================================
+   RPE SCALE
+============================================================ */
+function pickRPE(level){
+  sfx.click();
+  G.selectedRPE = level;
+  document.querySelectorAll('.rpe-btn').forEach(b=>{
+    b.classList.toggle('selected', parseInt(b.dataset.rpe) === level);
+  });
+  const replies = {
+    1: '😎 Latihan tadi terasa sangat ringan. Kamu masih punya banyak energi — coba tingkatkan intensitas atau durasi sesi berikutnya!',
+    2: '🙂 Bagus, tubuhmu masih terasa nyaman. Ini zona latihan ideal untuk membangun kebiasaan.',
+    3: '😅 Lelah sedang itu pertanda baik — artinya tubuhmu bekerja efektif. Istirahatlah cukup dan minum air putih!',
+    4: '😰 Wah, tubuhmu bekerja keras hari ini! Beri waktu istirahat 1 hari agar otot pulih.',
+    5: '🥵 Sangat berat — kamu sudah memberikan yang terbaik! Istirahat total, minum banyak air, dan tidur cukup.'
+  };
+  document.getElementById('r-rpe-reply').textContent = replies[level] || '';
+  /* Update stored session dengan RPE */
+  updateLatestSession({rpe: level});
+}
+
+/* ============================================================
+   ACHIEVEMENTS — capaian berdasarkan performa
+============================================================ */
+function renderAchievements(totalReps, avgAcc){
+  const ach = [
+    {
+      id:'complete', icon:'🎯', title:'Penyelesai Misi',
+      desc:'Menyelesaikan semua 3 gerakan',
+      unlocked: G.completedMoves.length >= MOVES.length
+    },
+    {
+      id:'accurate', icon:'🎖️', title:'Gerakan Akurat',
+      desc:'Rata-rata akurasi ≥ 80%',
+      unlocked: avgAcc >= 80
+    },
+    {
+      id:'persistent', icon:'💪', title:'Pejuang Bugar',
+      desc:'Total ≥ 30 reps gerakan',
+      unlocked: totalReps >= 30
+    },
+    {
+      id:'consistent', icon:'⭐', title:'Bintang Konsisten',
+      desc:'Dapat 3 bintang di salah satu gerakan',
+      unlocked: Object.values(G.moveScores).some(s=>s.stars===3)
+    },
+    {
+      id:'noRestart', icon:'🏆', title:'Pemain Tangguh',
+      desc:'Tidak menggunakan tombol restart',
+      unlocked: Object.keys(G.restartsUsed).length === 0 || 
+                Object.values(G.restartsUsed).every(v=>v===0)
+    },
+    {
+      id:'allStar', icon:'🌟', title:'Atlet Junior',
+      desc:'Dapat ≥ 2 bintang di semua gerakan',
+      unlocked: G.completedMoves.length>=MOVES.length && Object.values(G.moveScores).every(s=>s.stars>=2)
+    },
+  ];
+  document.getElementById('r-achievements').innerHTML = ach.map(a=>`
+    <div class="ach-item ${a.unlocked?'unlocked':'locked'}">
+      <div class="ach-icon">${a.unlocked?a.icon:'🔒'}</div>
+      <div class="ach-info">
+        <div class="ach-title">${a.title}</div>
+        <div class="ach-desc">${a.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   MOOD SURVEY
+============================================================ */
+function pickMood(level){
+  sfx.click();
+  G.selectedMood = level;
+  document.querySelectorAll('.mood-btn').forEach(b=>{
+    b.classList.toggle('selected', parseInt(b.dataset.mood) === level);
+  });
+  const replies = {
+    1: '😔 Kamu terlihat lelah. Istirahatlah yang cukup ya, dan minum air putih! Hari berikutnya pasti lebih ringan.',
+    2: '🤗 Lelah itu wajar — itu tanda tubuhmu bekerja keras. Latihan rutin akan membuat staminamu meningkat!',
+    3: '👍 Bagus, kamu masih punya energi. Coba tingkatkan intensitas latihan di sesi berikutnya!',
+    4: `😄 Senang sekali mendengarnya, ${G.playerName}! Aktivitas jasmani memang membuat hati gembira.`,
+    5: `🎉 Luar biasa, ${G.playerName}! Energimu menular — pertahankan semangat ini setiap hari!`
+  };
+  document.getElementById('r-mood-reply').textContent = replies[level] || '';
+  /* Update stored session */
+  updateLatestSession({mood: level});
+}
+
+/* ============================================================
+   ANALYTICS — LOCAL STORAGE + CSV EXPORT
+============================================================ */
+const LS_KEY_HISTORY = 'gim_kebugaran_history_v1';
+const LS_KEY_BIOMECH = 'gim_kebugaran_biomech_v1';
+
+function saveSessionHistory(session){
+  try{
+    const raw = localStorage.getItem(LS_KEY_HISTORY);
+    const arr = raw ? JSON.parse(raw) : [];
+    arr.push(session);
+    /* Max 50 sesi — geser yang lama */
+    while(arr.length > 50) arr.shift();
+    localStorage.setItem(LS_KEY_HISTORY, JSON.stringify(arr));
+  }catch(e){
+    console.warn('[Storage] Gagal simpan sesi:', e);
+  }
+}
+
+function updateLatestSession(updates){
+  try{
+    const raw = localStorage.getItem(LS_KEY_HISTORY);
+    if(!raw) return;
+    const arr = JSON.parse(raw);
+    if(!arr.length) return;
+    Object.assign(arr[arr.length-1], updates);
+    localStorage.setItem(LS_KEY_HISTORY, JSON.stringify(arr));
+  }catch(e){}
+}
+
+function loadHistory(){
+  try{
+    const raw = localStorage.getItem(LS_KEY_HISTORY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ return []; }
+}
+
+function clearHistory(){
+  if(!confirm('⚠ Hapus SEMUA riwayat sesi?\n\nTindakan ini tidak bisa dibatalkan.')) return;
+  try{
+    localStorage.removeItem(LS_KEY_HISTORY);
+    localStorage.removeItem(LS_KEY_BIOMECH);
+    sfx.click();
+    showHistoryModal(); /* refresh */
+  }catch(e){
+    alert('Gagal menghapus riwayat.');
+  }
+}
+
+function showHistoryModal(){
+  const arr = loadHistory();
+  const c = document.getElementById('hist-content');
+  if(!arr.length){
+    c.innerHTML = '<div class="t-body c-m tc" style="padding:30px">Belum ada riwayat sesi tersimpan.</div>';
+  } else {
+    c.innerHTML = `
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Pemain</th>
+            <th>Skor</th>
+            <th>Reps</th>
+            <th>Akurasi</th>
+            <th>Selesai</th>
+            <th>Tier</th>
+            <th>RPE</th>
+            <th>Mood</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${arr.slice().reverse().map(s=>{
+            const d = new Date(s.timestamp);
+            const dStr = d.toLocaleDateString('id-ID',{day:'2-digit',month:'short'}) + ' ' +
+                         d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+            const tierClass = 'ht-' + (s.tierTier || 'bronze');
+            return `<tr>
+              <td>${dStr}</td>
+              <td>${escapeHtml(s.player||'-')}</td>
+              <td><strong>${s.totalScore||0}</strong></td>
+              <td>${s.totalReps||0}</td>
+              <td>${s.avgAcc||0}%</td>
+              <td>${s.completed||0}/${MOVES.length}</td>
+              <td><span class="hist-tier ${tierClass}">${s.tier||'-'}</span></td>
+              <td>${s.rpe?'⚡'+s.rpe:'-'}</td>
+              <td>${s.mood?'😀'+s.mood:'-'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      <div class="t-xs c-m" style="text-align:center;margin-top:10px">Total ${arr.length} sesi tersimpan</div>
+    `;
+  }
+  openModal('m-history');
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* === CSV EXPORT (ringkasan) === */
+function exportCSV(){
+  sfx.click();
+  const session = collectCurrentSessionData();
+  if(!session){ alert('Belum ada data untuk diunduh.'); return; }
+
+  const rows = [
+    ['Field','Value'],
+    ['Tanggal', session.timestamp],
+    ['Nama Pemain', session.player],
+    ['Durasi per Gerakan (detik)', session.duration],
+    ['Total Skor', session.totalScore],
+    ['Total Reps', session.totalReps],
+    ['Rata-rata Akurasi (%)', session.avgAcc],
+    ['Gerakan Selesai', session.completed + '/' + MOVES.length],
+    ['Tier', session.tier],
+    ['RPE (Tingkat Kelelahan)', session.rpe || '-'],
+    ['Mood', session.mood || '-'],
+    [''],
+    ['=== REKAP PER GERAKAN ===',''],
+    ['Gerakan','Reps','Akurasi (%)','Skor','Bintang','Restart Used']
+  ];
+  MOVES.forEach(m=>{
+    const sc = session.moves?.[m.id];
+    if(!sc) return;
+    rows.push([m.name, sc.reps, sc.acc, sc.score, sc.stars, session.restartsUsed?.[m.id] || 0]);
+  });
+  downloadCSV(rows, `gim_kebugaran_${session.player||'pemain'}_${dateStamp()}.csv`);
+}
+
+/* === Export biomekanika detail === */
+function exportDetailCSV(){
+  sfx.click();
+  const log = G.biomechanicsLog || [];
+  if(!log.length){ alert('Belum ada data biomekanika untuk diunduh.\nJalankan minimal 1 sesi gerakan dulu.'); return; }
+  const rows = [['Timestamp','Move','Phase','Angles (JSON)','Match']];
+  log.forEach(e=>{
+    rows.push([e.t, e.move, e.phase, JSON.stringify(e.angles||{}), e.match?'YES':'NO']);
+  });
+  downloadCSV(rows, `gim_kebugaran_biomechanics_${dateStamp()}.csv`);
+}
+
+function exportHistoryCSV(){
+  sfx.click();
+  const arr = loadHistory();
+  if(!arr.length){ alert('Belum ada riwayat untuk diunduh.'); return; }
+  const rows = [['Timestamp','Player','Duration(s)','TotalScore','TotalReps','AvgAcc(%)','Completed','Tier','RPE','Mood']];
+  arr.forEach(s=>{
+    rows.push([
+      s.timestamp, s.player||'', s.duration||0, s.totalScore||0,
+      s.totalReps||0, s.avgAcc||0, s.completed||0, s.tier||'', s.rpe||'', s.mood||''
+    ]);
+  });
+  downloadCSV(rows, `gim_kebugaran_history_${dateStamp()}.csv`);
+}
+
+function collectCurrentSessionData(){
+  const arr = loadHistory();
+  return arr.length ? arr[arr.length-1] : null;
+}
+
+function downloadCSV(rows, filename){
+  const csv = rows.map(r=>r.map(cell=>{
+    const s = String(cell == null ? '' : cell);
+    /* Escape jika ada koma, kutip, newline */
+    if(/[",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+    return s;
+  }).join(',')).join('\n');
+  /* BOM agar Excel kenali UTF-8 */
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+}
+
+function dateStamp(){
+  const d = new Date();
+  return d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2)
+       + '_' + ('0'+d.getHours()).slice(-2) + ('0'+d.getMinutes()).slice(-2);
+}
+
+/* === Biomechanics recorder (dipanggil dari onPoseResults saat playing) === */
+function logBiomech(moveId, phase, angles, match){
+  if(!G.biomechanicsLog) G.biomechanicsLog = [];
+  /* Batasi 5000 entries supaya tidak overflow */
+  if(G.biomechanicsLog.length >= 5000) return;
+  G.biomechanicsLog.push({
+    t: Date.now(),
+    move: moveId,
+    phase: phase,
+    angles: angles,
+    match: match
+  });
+}
+
+function resetGame(){
+  stopCamera();stopTimer();stopAllMusic();
+  if(poseWatchdog){clearTimeout(poseWatchdog);poseWatchdog=null;}
+  isProcessingFrame=false;
+  /* reset ready state — 3 langkah */
+  G.isReady=false;
+  G.readyPostureOk=false;G.readyPhaseAOk=false;G.readyPhaseBOk=false;
+  G.readyHoldP=0;G.readyHoldA=0;G.readyHoldB=0;G.readyCountdown=0;
+  G.restartsUsed={};
+  hideReadyOverlay();
+  G.playerName='';G.duration=30;
+  G.completedMoves=[];G.moveScores={};G.totalScore=0;
+  G.curMove=null;G.reps=0;G.sessScore=0;
+  G.totalFrames=0;G.matchedFrames=0;G.repCooldown=0;
+  /* Reset versus mode */
+  G.mode='solo';
+  G.player2Name='';G.currentPlayer=1;
+  G.p1Scores={};G.p2Scores={};
+  G.p1Total=0;G.p2Total=0;
+  G.p1Completed=[];G.p2Completed=[];
+  /* Reset biomech log */
+  G.biomechanicsLog=[];
+  document.getElementById('hud').style.display='none';
+  document.getElementById('inp-name').value='';
+  /* Clear versus inputs */
+  const i1=document.getElementById('inp-vs-p1'); if(i1) i1.value='';
+  const i2=document.getElementById('inp-vs-p2'); if(i2) i2.value='';
+  document.querySelectorAll('.dur-p').forEach(p=>p.classList.toggle('on',p.dataset.d==='30'));
+}
+
+/* ============================================================
+   KEYBOARD
+============================================================ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.getElementById('s-game').classList.contains('active'))finishEarly();
+});
+
+/* ============================================================
+   BOOT
+============================================================ */
+/* ============================================================
+   BOOT
+============================================================ */
+window.addEventListener('load', ()=>{
+  preloadAssets();
+  initMediaPipe();
+});
+
+/* Auto-start home music pada first user interaction
+   (Browser autoplay policy butuh user gesture sebelum audio play) */
+let _firstClickDone = false;
+function _onFirstInteraction(){
+  if(_firstClickDone) return;
+  _firstClickDone = true;
+  au(); /* unlock AudioContext */
+  /* Tunggu sebentar agar asset loader siap */
+  setTimeout(()=>{
+    if(AUDIO_BUFFERS && AUDIO_BUFFERS.music_home){
+      playHomeMusic();
+    }
+  }, 200);
+}
+document.addEventListener('click', _onFirstInteraction, {once:false, capture:true});
+document.addEventListener('touchstart', _onFirstInteraction, {once:false, capture:true});
+document.addEventListener('keydown', _onFirstInteraction, {once:false, capture:true});
+</script>
+</body>
+</html>
